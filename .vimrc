@@ -8,6 +8,10 @@ vim9script
 # 	surround
 # 	? for C, C++ clang_complete, for python jedi_vim
 
+
+
+# Current language: "LC_CTYPE=en_US.UTF-8;LC_NUMERIC=C;LC_TIME=it_IT.UTF-8;LC_COLLATE=en_US.UTF-8;LC_MONETARY=it_IT.UTF-8;LC_MESSAGES=en_US.UTF-8;LC_PAPER=it_IT.UTF-8;LC_NAME=en_US.UTF-8;LC_ADDRESS=en_US.UTF-8;LC_TELEPHONE=en_US.UTF-8;LC_MEASUREMENT=it_IT.UTF-8;LC_IDENTIFICATION=en_US.UTF-8"
+
 set textwidth=79
 if has("win32")
 	set shell=\"C:\Program\ Files\Git\bin\sh.exe\"
@@ -324,8 +328,8 @@ if has('eval')
 	#g:netrw_liststyle = 3
 	g:netrw_winsize   = 30
 
-	g:netrw_sort_sequence = 'vim_todo,^[^.].*[\/]$,\<core\%(\.\d\+\)\=\>,\.h$,\.c$,\.cpp$,\~\=\*$,*,^\..*[\/]$,^\.,\.o$,\.obj$,\.info$,\.swp$,\.bak$,\~$'
-	g:netrw_list_hide = '^\./\?$,^\.\./\?$'
+	g:netrw_sort_sequence = 'vim_todo,^[^.].*[\/]$,\<core\%(\.\d\+\)\=\>,\.h$,\.c$,\.cpp$,\~\=\*$,*,^\..*[\/]$,^\.,node_modules[\/],\.o$,\.obj$,\.info$,\.bak$,\~$'
+	g:netrw_list_hide = '^\./\?$,^\.\./\?$,\.swp$,\.swo$'
 	if has("win32")
 		g:netrw_localmovecmd = 'C:\Program Files\Git\usr\bin\mv.exe'
 		g:netrw_localmovecmdopt = ''
