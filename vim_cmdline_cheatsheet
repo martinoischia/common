@@ -1,0 +1,13 @@
+*Special_chars*
+
+# has to be escaped!!!! \#
+% same
+after ~ in command mode devi espanderla alla home se la vuoi usare come home
+
+*other*
+
+:put reg
+
+:grepadd 	since it is a strange command to open a new quickfix list, try use :ldo
+
+" vim:ft=help

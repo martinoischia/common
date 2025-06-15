@@ -1,0 +1,70 @@
+*/magic-vs-literal-(\V)-and-case-sensitivity*
+
+Magic is a default option, and should never be changed.
+
+"\m" makes the pattern after it be interpreted as if 'magic'
+"\M"  'nomagic'
+"\v" all ASCII characters except '0'-'9', 'a'-'z', 'A'-'Z' and '_' have special meaning: "very magic"
+"\V" only a backslash and the terminating character (usually / or ?) have special meaning: "very nomagic"
+"\c" case insensitive
+
+after:	  \v	   \m	    \M	     \V		matches ~
+		  \\	   \\	    \\	     \\		literal backslash
+
+Magic:
+ ~ means the last substituted string (to find where it is I suppose)
+ \(\) are for group
+ [] are collections (\_[] to include EOL)
+ * is the only non backslashed multi (quantifier?)
+ \| is the or
+ \< e \> are ends of word
+
+*end-of-line*
+
+'\_s', '\_.' and all the underscore version of character classes below (atomic
+element, is called a character class). Add the end-of-line to their possible
+matches (in python there is a flag DOTALL (which btw are combined using this
+operator '|')
+
+*Relevant_character_classes*
+
+\w word_character
+\h	head of word character (no digits)		[A-Za-z_]
+\a	alphabetic character:		[A-Za-z]
+
+Unfortunately cannot use this inside [] (\d100 is ASCII character 100). You
+have to resort to "character classes expressions", that is [:alnum:] [:alpha:]
+[:digit:] (non c'e' mai l'_ in queste).
+
+*greediness*
+
+\{-} is equivalent to * but nongreedy (but longer match starting first is
+prefered) [in python one just uses ? added to *,+...]
+
+*collections*
+
+^ at beginning to negate
+- has usually range meaning!
+
+*:substitute(second-argument)*
+
+magic	nomagic	  action    ~
+  ~	  \~	  replaced with the {string} of the previous substitute
+  &	  \&	  replaced with the whole matched pattern
+      \0	  replaced with the whole matched pattern
+      \1	  replaced with the matched pattern in the first
+		  pair of ()
+
+
+      \u	  next character made uppercase
+      \U	  following characters made uppercase, until \E
+      \l	  next character made lowercase
+      \L	  following characters made lowercase, until \E
+      \e	  end of \u, \U, \l and \L (NOTE: not <Esc>!)
+      \E	  end of \u, \U, \l and \L
+
+      \t	  insert a <Tab>
+	  \r      new line
+      \\	  insert a single backslash
+
+" vim:ft=help

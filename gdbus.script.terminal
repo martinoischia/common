@@ -1,0 +1,3 @@
+# vim: set fo-=a
+gdbus call --session --dest org.gnome.Shell --object-path /de/lucaswerkmeister/ActivateWindowByTitle --method de.lucaswerkmeister.ActivateWindowByTitle.activateByWmClass 'gnome-terminal-server'
+

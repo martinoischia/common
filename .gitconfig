@@ -1,0 +1,17 @@
+[core]
+	editor = vim
+
+[user]
+	name = "Martino Ischia"
+	email = "ischiamartino@gmail.com"
+
+[grep]
+	fallbackToNoIndex = true
+[init]
+	defaultBranch = master
+[sendemail]
+	smtpPass = adup snsj dftp vbuo
+	smtpserver = smtp.gmail.com
+	smtpuser = ischiamartino@gmail.com
+	smtpencryption = tls
+	smtpserverport = 587

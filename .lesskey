@@ -1,0 +1,3 @@
+#env
+#LESS= -S -i -R -F -m
+# -M -PM?f%f .?n?m(%T %i of %m) ..?ltlines %lt-%lb/%L .?e(END) .%t$

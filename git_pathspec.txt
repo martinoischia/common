@@ -1,0 +1,9 @@
+*git_help_glossary*
+
+- * is recursive
+- :xxx:path or :():, the final ':' can be omitted usually
+- :glob: makes * not recursive
+- :exclude: or :!: or :^: excludes from previously specified pathspec (or all
+  if none were specified)
+
+" vim:ft=help

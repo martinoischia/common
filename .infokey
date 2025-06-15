@@ -1,0 +1,46 @@
+#var
+nodeline=print
+scroll-behaviour=Page Only
+link-style=green
+active-link-style=blue,bold
+match-style=bgmagenta
+
+
+#info
+g       beginning-of-node
+G       end-of-node
+j       next-line
+k       prev-line
+a       next-node # !!
+n       search-next
+N       search-previous
+^c      abort-key
+r       goto-node # raw string
+f       virtual-index
+:q      quit                    # end of important 
+
+
+
+^f      scroll-forward
+z       scroll-forward-page-only-set-window
+
+b       scroll-backward
+^b      scroll-backward
+w       scroll-backward-page-only-set-window
+
+^e      down-line
+^j      down-line
+^y      up-line
+^k      up-line
+
+d       scroll-half-screen-down
+^d      scroll-half-screen-down
+
+'       last-node
+\md     dir-node
+
+
+\mf     xref-item
+^xr     xref-item
+
+\mh     get-info-help-node
