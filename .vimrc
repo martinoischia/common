@@ -16,7 +16,7 @@ set textwidth=79
 if has("win32")
 	set shell=\"C:\Program\ Files\Git\bin\sh.exe\"
 	set isfname-=:
-	autocmd VimEnter * call test_mswin_event('set_keycode_trans_strategy', { 'strategy': 'experimental'})
+	autocmd GUIEnter * call test_mswin_event('set_keycode_trans_strategy', { 'strategy': 'experimental'})
 endif
 
 if has('eval')
@@ -26,7 +26,10 @@ if has('eval')
 			:%s/\s\+$//e
 		endif
 	enddef
-	autocmd BufWritePre * RemoveWhiteSpaceIf()
+	augroup whitespace
+		autocmd!
+		autocmd BufWritePre * RemoveWhiteSpaceIf()
+	augroup END
 endif
 
 # Disable completing keywords in included files (e.g., #include in C).  When
@@ -63,7 +66,10 @@ if has('eval')
 			enddef
 
 			call g:SetGGrep()
-			autocmd DirChanged * call g:SetGGrep()
+			augroup grepping
+				autocmd!
+				autocmd DirChanged * call g:SetGGrep()
+			augroup END
 		endif
 	enddef
 	# To postepone the thing after plugins have loaded - I suppose
@@ -166,12 +172,23 @@ noremap <S-Tab> <C-I>
 noremap <Tab> <C-O>
 noremap <BS> <C-6>
 noremap <S-BS> <C-6>
-noremap Y y$
+nnoremap Y y$
 noremap H K
 noremap K <C-]>
-noremap L <C-T>
+nnoremap L <C-T>
 # this is one are more because how I have setup my glove80
-noremap <Enter> 5j
+augroup quickfix_binding
+  def If_qf()
+	  if (&buftype == 'quickfix')
+		  unmap <Enter>
+	  else
+		  noremap <Enter> 5j
+	  endif
+  enddef
+  autocmd!
+  autocmd BufWinEnter * If_qf()
+augroup END
+
 noremap <C-D> 5j
 noremap <C-F> 5k
 noremap <S-Enter> <PageDown>
@@ -181,8 +198,8 @@ inoremap <C-V> <C-X><C-O>
 inoremap <C-N> <C-P>
 inoremap <C-P> <C-N>
 # zz is easier to type
-noremap zt zz
-noremap zz zt
+nnoremap zt zz
+nnoremap zz zt
 noremap <expr> n 'Nn'[v:searchforward]
 noremap <expr> N 'nN'[v:searchforward]
 
@@ -219,7 +236,8 @@ noremap <c-s-s> <C-w>>
 # primary
 noremap <c-a-p> "*p
 inoremap <c-a-p> <Esc>"*pa
-# clipboard
+# clipboard.. you should reread in the doc of win32 says something about ctrlc
+# ctrl v
 if has("win32")
 	vnoremap <c-C> "+y
 	noremap <c-a-t> "+p
@@ -228,7 +246,10 @@ noremap <c-a-l> "+p
 inoremap <c-a-l> <Esc>"+pa
 ############################################################################
 
-au TerminalWinOpen * setlocal bufhidden=hide
+augroup term
+	autocmd!
+	autocmd TerminalWinOpen * setlocal bufhidden=hide
+augroup END
 
 tnoremap <Esc> <C-w>N
 
