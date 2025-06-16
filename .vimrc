@@ -16,6 +16,7 @@ set textwidth=79
 if has("win32")
 	set shell=\"C:\Program\ Files\Git\bin\sh.exe\"
 	set isfname-=:
+	autocmd VimEnter * call test_mswin_event('set_keycode_trans_strategy', { 'strategy': 'experimental'})
 endif
 
 if has('eval')
