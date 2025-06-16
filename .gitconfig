@@ -1,5 +1,6 @@
 [core]
 	editor = vim
+	excludesFile = ~/.gitignore
 
 [user]
 	name = "Martino Ischia"
@@ -9,9 +10,3 @@
 	fallbackToNoIndex = true
 [init]
 	defaultBranch = master
-[sendemail]
-	smtpPass = adup snsj dftp vbuo
-	smtpserver = smtp.gmail.com
-	smtpuser = ischiamartino@gmail.com
-	smtpencryption = tls
-	smtpserverport = 587
