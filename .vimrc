@@ -179,9 +179,8 @@ nnoremap L <C-T>
 # this is one are more because how I have setup my glove80
 augroup quickfix_binding
   def If_qf()
-	  if (&buftype == 'quickfix' && !exists("b:unmap"))
-		  b:unmap = 1
-		  unmap <buffer> <Enter>
+	  if (&buftype == 'quickfix')
+		  noremap <buffer> <Enter> <Enter>
   	  endif
   enddef
   autocmd!
@@ -191,6 +190,7 @@ augroup END
 noremap <Enter> 5j
 noremap <C-D> 5j
 noremap <C-F> 5k
+noremap <Space> 5k
 noremap <S-Enter> <PageDown>
 noremap <C-S-F> <PageUp>
 noremap <C-S-D> <PageDown>
