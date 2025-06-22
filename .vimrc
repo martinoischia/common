@@ -89,10 +89,10 @@ if has('eval')
 	enddef
 
 
-	command -nargs=? MTemporary call SaveToTemp(<f-args>)
-	command -nargs=? Mtemporary call SaveToTemp(<f-args>)
-	command -nargs=? MkTemporary call SaveToTemp(<f-args>)
-	command -nargs=? MKTemporary call SaveToTemp(<f-args>)
+	command! -nargs=? MTemporary call SaveToTemp(<f-args>)
+	command! -nargs=? Mtemporary call SaveToTemp(<f-args>)
+	command! -nargs=? MkTemporary call SaveToTemp(<f-args>)
+	command! -nargs=? MKTemporary call SaveToTemp(<f-args>)
 endif
 
 set nonumber
@@ -137,7 +137,7 @@ set mousemodel=popup
 
 # using legacy function, just coz let-& seems not supported in vim9
 if has('eval')
-	function g:ToggleCursor()
+	function! g:ToggleCursor()
 		const default = 'n-v-c:block-Cursor/lCursor,ve:ver35-Cursor,o:hor50-Cursor,i-ci:ver25-Cursor/lCursor,r-cr:hor20-Cursor/lCursor,sm:block-Cursor-blinkwait175-blinkoff150-blinkon175'
 		"
 		" white_except_insert
@@ -276,9 +276,9 @@ vnoremap <silent> # :<C-U>
 vnoremap // y/\V<C-R>=escape(@",'/\')<CR><CR>
 
 if has("win32")
-	command TerCur term ++curwin
-	command TermCur term ++curwin
-	command TerminalCur term ++curwin
+	command! TerCur term ++curwin
+	command! TermCur term ++curwin
+	command! TerminalCur term ++curwin
 endif
 set exrc # excecute vimrc in current directory
 
@@ -311,15 +311,15 @@ set gdefault
 
 # Conveniency
 
-command Vs vert split
-command W write
-command Wa wall
-command WA wall
-command Wq wq
-command WQ wq
-command -bang Q quit<bang>
-command -bang Qa qall<bang>
-command -bang QA qall<bang>
+command! Vs vert split
+command! W write
+command! Wa wall
+command! WA wall
+command! Wq wq
+command! WQ wq
+command! -bang Q quit<bang>
+command! -bang Qa qall<bang>
+command! -bang QA qall<bang>
 nnoremap <C-w>a <Cmd>qall<CR>
 
 if has("unix")
