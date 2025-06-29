@@ -19,10 +19,11 @@ if has("win32")
 	autocmd GUIEnter * call test_mswin_event('set_keycode_trans_strategy', { 'strategy': 'experimental'})
 endif
 
+b:IWantWhiteSpace = 1
 if has('eval')
 	# always remove trailing whitespace at file write (questionable, maybe)
 	def RemoveWhiteSpaceIf()
-		if !exists('g:IWantWhiteSpace')
+		if !exists('b:IWantWhiteSpace')
 			:%s/\s\+$//e
 		endif
 	enddef
@@ -107,6 +108,7 @@ set nowrap
 set nowrapscan
 
 set smartindent
+set autoindent
 set shiftwidth=4
 set tabstop=4
 set shortmess-=S
@@ -157,7 +159,7 @@ if has('eval')
 endif
 
 set shiftround # just when type >> when you already have 2 spaces it just adds 2
-setlocal path=.,,
+set path+=src/**,lib/**
 set backspace=indent,eol,start
 set splitright
 set splitbelow
@@ -176,7 +178,22 @@ nnoremap Y y$
 noremap H K
 noremap K <C-]>
 nnoremap L <C-T>
-# this is one are more because how I have setup my glove80
+
+noremap <expr> n 'Nn'[v:searchforward]
+noremap <expr> N 'nN'[v:searchforward]
+
+noremap <Leader>t <Cmd>colorscheme torte<CR>
+noremap <Leader>e <Cmd>colorscheme evening<CR>
+noremap <Leader>s <Cmd>colorscheme slate<CR>
+noremap <Leader>l <Cmd>set background=dark <Bar> colorscheme lunaperche<CR>
+noremap <Leader>d <Cmd>colorscheme default<CR>
+
+############################################################################
+# these might look weird but they are in synthony with how I have reprogrammed
+# my Glove80 keyboard (try look for "Setup for Vim with ext num keypad" by
+# mischia on their website)
+# Unfortunately, most of this stuff does not work from terminal vim.
+
 augroup quickfix_binding
   def If_qf()
 	  if (&buftype == 'quickfix')
@@ -192,35 +209,20 @@ noremap <C-D> 5j
 noremap <C-F> 5k
 noremap <Space> 5k
 noremap <S-Enter> <PageDown>
+noremap <S-Space> <PageUp>
 noremap <C-S-F> <PageUp>
 noremap <C-S-D> <PageDown>
 inoremap <C-V> <C-X><C-O>
-inoremap <C-N> <C-P>
-inoremap <C-P> <C-N>
-# zz is easier to type
-nnoremap zt zz
-nnoremap zz zt
-noremap <expr> n 'Nn'[v:searchforward]
-noremap <expr> N 'nN'[v:searchforward]
-
-noremap <Leader>t <Cmd>colorscheme torte<CR>
-noremap <Leader>e <Cmd>colorscheme evening<CR>
-noremap <Leader>s <Cmd>colorscheme slate<CR>
-noremap <Leader>l <Cmd>set background=dark <Bar> colorscheme lunaperche<CR>
-noremap <Leader>d <Cmd>colorscheme default<CR>
-
-############################################################################
-# these might look weird but they are in synthony with how I have reprogrammed
-# my Glove80 keyboard (try look for "Setup for Vim with ext num keypad" by
-# mischia on their website)
-# Unfortunately, none of this stuff works from terminal vim.
-
 if has("unix") #to debug on win
 	noremap <c-s-r> <Cmd>call ToggleCursor()<CR>
 endif
 noremap <c-s-h> <Cmd>noh<CR>
 noremap <c-a-f> <Cmd>enew<CR>
 noremap <c-s-a-f> <Cmd>vnew<CR>
+noremap <c-m> :buffer 
+noremap <c-s-m> :find 
+noremap <a-f> gf
+noremap <a-s-f> gF
 inoremap <c-s-y> <C-x><C-u>
 
 # const pattern = '\m\([/*|=>]$|@\s+.*\)'
@@ -228,22 +230,13 @@ noremap <c-a-b> <Cmd>silent edit %:h <Bar> call search('^\V' .. expand("#:t") ..
 # symbolic links end in @  ---> ...
 
 noremap <c-s-a-b> <Cmd>silent edit .<CR>
-noremap <c-s-a> <C-w><
-noremap <c-s-s> <C-w>>
-# noremap <c-s-f> <C-w>+
-# noremap <c-s-d> <C-w>-
 
+# clipboard.. you probably should reread in the doc of win32 says something about ctrlc ctrl v
 # primary
-noremap <c-a-p> "*p
-inoremap <c-a-p> <Esc>"*pa
-# clipboard.. you should reread in the doc of win32 says something about ctrlc
-# ctrl v
-if has("win32")
-	vnoremap <c-C> "+y
-	noremap <c-a-t> "+p
-endif
-noremap <c-a-l> "+p
-inoremap <c-a-l> <Esc>"+pa
+noremap <c-p> "*p
+vnoremap <c-c> "+y
+
+noremap <c-n> "+p
 ############################################################################
 
 augroup term
@@ -311,6 +304,12 @@ set gdefault
 
 # Conveniency
 
+# zz is easier to type
+nnoremap <Up> <c-y>
+nnoremap <Down> <c-e>
+nnoremap zt zz
+nnoremap zz zt
+cabbrev cw bo cw
 command! Vs vert split
 command! W write
 command! Wa wall
