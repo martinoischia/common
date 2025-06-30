@@ -245,6 +245,8 @@ augroup term
 augroup END
 
 tnoremap <Esc> <C-w>N
+tnoremap <C-PageUp> <cmd>tabprevious<CR>
+tnoremap <C-PageDown> <cmd>tabnext<CR>
 
 #inoremap <c-w><c-w> <esc><c-w><c-w>gi
 #inoremap <c-w>j <esc><c-w>jgi
