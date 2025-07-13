@@ -220,8 +220,8 @@ noremap <c-s-h> <Cmd>noh<CR>
 noremap <c-a-f> <Cmd>vert split<CR>
 # mm see pattern below
 noremap <c-s-a-f> <Cmd>vert split %:h<CR>
-noremap <c-m> :buffer
-noremap <c-s-m> :find
+noremap <c-e> :buffer 
+noremap <c-s-e> :find 
 noremap <a-f> gf
 noremap <a-s-f> gF
 inoremap <c-s-y> <C-x><C-u>
