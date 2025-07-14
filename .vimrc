@@ -9,7 +9,6 @@ vim9script
 # 	? for C, C++ clang_complete, for python jedi_vim
 
 
-
 # Current language: "LC_CTYPE=en_US.UTF-8;LC_NUMERIC=C;LC_TIME=it_IT.UTF-8;LC_COLLATE=en_US.UTF-8;LC_MONETARY=it_IT.UTF-8;LC_MESSAGES=en_US.UTF-8;LC_PAPER=it_IT.UTF-8;LC_NAME=en_US.UTF-8;LC_ADDRESS=en_US.UTF-8;LC_TELEPHONE=en_US.UTF-8;LC_MEASUREMENT=it_IT.UTF-8;LC_IDENTIFICATION=en_US.UTF-8"
 
 set textwidth=79
@@ -170,6 +169,8 @@ if !exists(":DiffOrig")
 		  \ | wincmd p | diffthis
 endif
 
+nnoremap <Left> <Cmd>cprevious<CR>
+nnoremap <Right> <Cmd>cnext<CR>
 noremap <S-Tab> <C-I>
 noremap <Tab> <C-O>
 noremap <BS> <C-6>
@@ -276,7 +277,12 @@ if has("win32")
 	command! TermCur term ++curwin
 	command! TerminalCur term ++curwin
 endif
-set exrc # excecute vimrc in current directory
+
+augroup exrc # fuck 'exrc'
+	autocmd DirChanged global if filereadable(".vimrc") | source .virmc | endif
+	autocmd DirChanged tabpage if filereadable(".vimrc") | source .virmc | endif
+	autocmd DirChanged window if filereadable(".vimrc") | source .virmc | endif
+augroup END
 
 # In TUI Vim, <C-S-letter> is indistinguishable from <C-letter>. You should change them to more portable combos.
 # nnoremap <C-j> <C-w>p<C-e><C-w>p
