@@ -47,24 +47,26 @@ endif
 
 set laststatus=2
 set statusline=[%n]%<%f\ %h%m%r%y%=%-14.(%l,%c%)\ %P
+if v:vim_did_enter && has('eval') && &rtp =~ 'vim-fugitive'
+	set statusline=[%n]%<%f\ %h%m%r%y%{FugitiveStatusline()}%=%-14.(%l,%c%)\ %P
+endif
+
 # # statusline affects scroll?
 # set scroll=5
 # autocmd WinResized * set scroll=5
 # autocmd VimResized * set scroll=5
 
 if has('eval')
+	def g:SetGGrep()
+		if  !empty(g:FugitiveExtractGitDir(getcwd()))
+			set grepprg=git\ grep\ -n
+		else
+			set grepprg&
+		endif
+	enddef
 	def Check_git_plugin()
 		if &rtp =~ 'vim-fugitive'
 			set statusline=[%n]%<%f\ %h%m%r%y%{FugitiveStatusline()}%=%-14.(%l,%c%)\ %P
-
-			def g:SetGGrep()
-				if  !empty(g:FugitiveExtractGitDir(getcwd()))
-					set grepprg=git\ grep\ -n
-				else
-					set grepprg&
-				endif
-			enddef
-
 			call g:SetGGrep()
 			augroup grepping
 				autocmd!
@@ -279,9 +281,11 @@ if has("win32")
 endif
 
 augroup exrc # fuck 'exrc'
-	autocmd DirChanged global if filereadable(".vimrc") | source .virmc | endif
-	autocmd DirChanged tabpage if filereadable(".vimrc") | source .virmc | endif
-	autocmd DirChanged window if filereadable(".vimrc") | source .virmc | endif
+	autocmd!
+	autocmd DirChanged * if filereadable(".vimrc") | source .vimrc | endif
+	autocmd DirChanged global if filereadable(".vimrc") | source .vimrc | endif
+	autocmd DirChanged tabpage if filereadable(".vimrc") | source .vimrc | endif
+	autocmd DirChanged window if filereadable(".vimrc") | source .vimrc | endif
 augroup END
 
 # In TUI Vim, <C-S-letter> is indistinguishable from <C-letter>. You should change them to more portable combos.
