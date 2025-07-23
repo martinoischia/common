@@ -18,17 +18,10 @@ if has("win32")
 	autocmd GUIEnter * call test_mswin_event('set_keycode_trans_strategy', { 'strategy': 'experimental'})
 endif
 
-b:IWantWhiteSpace = 1
 if has('eval')
-	# always remove trailing whitespace at file write (questionable, maybe)
-	def RemoveWhiteSpaceIf()
-		if !exists('b:IWantWhiteSpace')
-			:%s/\s\+$//e
-		endif
-	enddef
 	augroup whitespace
 		autocmd!
-		autocmd BufWritePre * RemoveWhiteSpaceIf()
+		autocmd BufWritePre * :%s/\s\+$//e
 	augroup END
 endif
 
