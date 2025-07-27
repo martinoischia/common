@@ -108,8 +108,8 @@ set tabstop=4
 set shortmess-=S
 
 if has('eval')
-	packadd! comment
-	packadd! matchit
+	silent! packadd! comment
+	silent! packadd! matchit
 endif
 filetype plugin indent on
 if has('syntax')
@@ -117,6 +117,7 @@ if has('syntax')
 endif
 if has('wildmenu')
   set wildmenu
+  set wildoptions=pum
 endif
 set conceallevel=3
 
@@ -216,8 +217,12 @@ noremap <c-s-h> <Cmd>noh<CR>
 noremap <c-a-f> <Cmd>vert split<CR>
 # mm see pattern below
 noremap <c-s-a-f> <Cmd>vert split %:h<CR>
-noremap <c-e> :buffer 
-noremap <c-s-e> :find 
+noremap  <c-s-e> :find<Space>*
+inoremap <c-s-e> <Esc>:find<Space>*
+cnoremap <c-s-e> <Esc>:find<Space>*
+noremap  <c-e> :buffer<Space>
+inoremap <c-e> <Esc>:buffer<Space>
+cnoremap <c-e> <Esc>:buffer<Space>
 noremap <a-f> gf
 noremap <a-s-f> gF
 inoremap <c-s-y> <C-x><C-u>
