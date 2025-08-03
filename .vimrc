@@ -226,6 +226,12 @@ cnoremap <c-e> <Esc>:buffer<Space>
 noremap <a-f> gf
 noremap <a-s-f> gF
 inoremap <c-s-y> <C-x><C-u>
+inoremap <c-a-;> <Cmd>write<CR>
+noremap <c-a-;> <Cmd>write<CR>
+inoremap <c-s-i> <Cmd>tabnext<CR>
+noremap <c-s-i> <Cmd>tabnext<CR>
+inoremap <c-s-u> <Cmd>tabprevious<CR>
+noremap <c-s-u> <Cmd>tabprevious<CR>
 
 # const pattern = '\m\([/*|=>]$|@\s+.*\)'
 noremap <c-a-b> <Cmd>silent edit %:h <Bar> call search('^\V' .. expand("#:t") .. '\m\($\\|[/*\|=>]$\\|@\s+\)')<CR>
