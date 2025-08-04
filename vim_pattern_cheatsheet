@@ -15,7 +15,7 @@ Magic:
  ~ means the last substituted string (to find where it is I suppose)
  \(\) are for group
  [] are collections (\_[] to include EOL)
- * is the only non backslashed multi (quantifier?)
+ * is the only non backslashed multi (quantifier)
  \| is the or
  \< e \> are ends of word
 

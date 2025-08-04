@@ -97,7 +97,7 @@ set hlsearch
 set incsearch
 set history=1000
 
-set so=5 # scrolloff
+set so=10 # scrolloff
 set nowrap
 set nowrapscan
 
