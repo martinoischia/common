@@ -36,6 +36,9 @@ set sidescrolloff=1
 
 if (argc() == 0)
 	silent edit ~/
+	if has("win32")
+		cd ~/
+	endif
 endif
 
 set laststatus=2
@@ -154,7 +157,6 @@ if has('eval')
 endif
 
 set shiftround # just when type >> when you already have 2 spaces it just adds 2
-set path+=src/**,lib/**
 set backspace=indent,eol,start
 set splitright
 set splitbelow
@@ -228,10 +230,10 @@ noremap <a-s-f> gF
 inoremap <c-s-y> <C-x><C-u>
 inoremap <c-a-;> <Cmd>write<CR>
 noremap <c-a-;> <Cmd>write<CR>
-inoremap <c-s-i> <Cmd>tabnext<CR>
-noremap <c-s-i> <Cmd>tabnext<CR>
-inoremap <c-s-u> <Cmd>tabprevious<CR>
-noremap <c-s-u> <Cmd>tabprevious<CR>
+# inoremap <c-s-i> <Cmd>tabnext<CR>
+# noremap <c-s-i> <Cmd>tabnext<CR>
+# inoremap <c-s-u> <Cmd>tabprevious<CR>
+# noremap <c-s-u> <Cmd>tabprevious<CR>
 
 # const pattern = '\m\([/*|=>]$|@\s+.*\)'
 noremap <c-a-b> <Cmd>silent edit %:h <Bar> call search('^\V' .. expand("#:t") .. '\m\($\\|[/*\|=>]$\\|@\s+\)')<CR>
