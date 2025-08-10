@@ -180,6 +180,7 @@ nnoremap Y y$
 noremap H K
 noremap K <C-]>
 nnoremap L <C-T>
+noremap t <Cmd>tabnew<CR>
 
 noremap <expr> n 'Nn'[v:searchforward]
 noremap <expr> N 'nN'[v:searchforward]
@@ -230,6 +231,7 @@ inoremap <c-e> <Esc>:b<Space>
 cnoremap <c-e> <Esc>:b<Space>
 noremap <a-f> gf
 noremap <a-s-f> gF
+# user defined completion, did I ever set one?
 inoremap <c-s-y> <C-x><C-u>
 inoremap <c-a-;> <Esc><Cmd>write<CR>
 noremap <c-a-;> <Cmd>write<CR>
