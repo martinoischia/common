@@ -53,7 +53,7 @@ endif
 # autocmd VimResized * set scroll=5
 
 if has('eval')
-	def g:SetGGrep()
+	def! g:SetGGrep()
 		if  !empty(g:FugitiveExtractGitDir(getcwd()))
 			set grepprg=git\ grep\ -n
 		else
@@ -121,6 +121,9 @@ endif
 if has('wildmenu')
   set wildmenu
   set wildoptions=pum
+endif
+if has('mksession')
+	set sessionoptions-=options
 endif
 set conceallevel=3
 
@@ -222,14 +225,16 @@ noremap <c-s-a-f> <Cmd>vert split %:h<CR>
 noremap  <c-s-e> :find<Space>*
 inoremap <c-s-e> <Esc>:find<Space>*
 cnoremap <c-s-e> <Esc>:find<Space>*
-noremap  <c-e> :buffer<Space>
-inoremap <c-e> <Esc>:buffer<Space>
-cnoremap <c-e> <Esc>:buffer<Space>
+noremap  <c-e> :b<Space>
+inoremap <c-e> <Esc>:b<Space>
+cnoremap <c-e> <Esc>:b<Space>
 noremap <a-f> gf
 noremap <a-s-f> gF
 inoremap <c-s-y> <C-x><C-u>
-inoremap <c-a-;> <Cmd>write<CR>
+inoremap <c-a-;> <Esc><Cmd>write<CR>
 noremap <c-a-;> <Cmd>write<CR>
+inoremap <c-s-g> <Esc><Cmd>execute "grep " .. expand("<cword>")<CR>
+noremap <c-s-g> <Cmd>execute "grep " .. expand("<cword>")<CR>
 # inoremap <c-s-i> <Cmd>tabnext<CR>
 # noremap <c-s-i> <Cmd>tabnext<CR>
 # inoremap <c-s-u> <Cmd>tabprevious<CR>
@@ -288,10 +293,10 @@ endif
 
 augroup exrc # fuck 'exrc'
 	autocmd!
-	autocmd DirChanged * if filereadable(".vimrc") | source .vimrc | endif
-	autocmd DirChanged global if filereadable(".vimrc") | source .vimrc | endif
-	autocmd DirChanged tabpage if filereadable(".vimrc") | source .vimrc | endif
-	autocmd DirChanged window if filereadable(".vimrc") | source .vimrc | endif
+	autocmd DirChanged * if filereadable(".vimrc") && getcwd() != expand('~') | source .vimrc | endif
+	autocmd DirChanged global if filereadable(".vimrc") && getcwd() != expand('~') | source .vimrc | endif
+	autocmd DirChanged tabpage if filereadable(".vimrc") && getcwd() != expand('~') | source .vimrc | endif
+	autocmd DirChanged window if filereadable(".vimrc") && getcwd() != expand('~') | source .vimrc | endif
 augroup END
 
 # In TUI Vim, <C-S-letter> is indistinguishable from <C-letter>. You should change them to more portable combos.
