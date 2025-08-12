@@ -168,6 +168,7 @@ alias vi='view'
 alias py='python3'
 alias pyh='python3 -m pydoc'
 alias simil='text_similarity.pl --type Text::Similarity::Overlaps'
+alias gvim='GTK_IM_MODULE=xim gvim'
 ff(){ find -iname \*$1\* ; } # find fuzzy
 fF(){ find -name \*$1\* ; } # find fuzzy
 PROMPT_DIRTRIM=2

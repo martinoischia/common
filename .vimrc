@@ -196,6 +196,18 @@ noremap <Leader>d <Cmd>colorscheme default<CR>
 # my Glove80 keyboard (try look for "Setup for Vim with ext num keypad" by
 # mischia on their website)
 # Unfortunately, most of this stuff does not work from terminal vim.
+#
+# [ means already used/ not assignable ]
+#
+#         Layer_Lower
+#           [ &kp C_BRI_DN   &kp C_BRI_UP     &kp C_PREV     &kp C_NEXT       &kp C_PP ]                                                                                    [ &kp C_MUTE   &kp C_VOL_DN      &kp C_VOL_UP ]            &none  &kp PAUSE_BREAK
+#                [&kp F11]          &none          &none          &none          &none          &none                                                                 &none  &kp KP_NUM  &kp LC(LA(I))     &kp LC(LA(L))     &kp LC(LA(X))  [&kp F12]
+#                &trans  &kp LC(LS(Q))  &kp LC(LS(W))  &kp changeme  [&kp LC(LS(R))]  &kp LC(LS(T))                                                         &kp LC(LS(Y))   [&kp LC(LS(U))      &kp LC(LS(I))]         &kp LA(O)     [&kp KP_N9]   &kp LC(LA(N6))
+#                &trans  &kp LC(LS(A))  &kp LC(LS(S))  &kp LC(LA(D))  &kp LA(F)  [&kp LC(LS(G))]                                                         &kp LC(LS(H))   [&kp KP_N0      &kp KP_N1         &kp KP_N2         &kp LC(LA(SEMI))]   &none
+#                &trans      &kp K_APP          &kp LC(LS(X))        &kp LC(LS(C))        &kp LC(LS(V))      &kp LC(LS(B))                               &trans  &trans  &trans  &trans  &trans &kp LC(LA(SPACE))                                  &none   &kp BSPC      &kp COMMA         &kp DOT   &kp LC(LA(DOT))    [&kp LC(PG_UP)]
+#  &magic LAYER_Magic 0          &none        &kp INS        &trans        &trans                                                              &trans  &trans  &trans  &trans  &trans  &trans                                &kp LC(MINUS)          &kp LC(EQUAL)  &kp LC(LA(LBKT))  &kp LC(LA(RBKT))    [&kp LC(PG_DN)]
+#
+#
 
 augroup quickfix_binding
   def If_qf()
@@ -208,8 +220,8 @@ augroup quickfix_binding
 augroup END
 
 noremap <Enter> 5j
-noremap <C-D> 5j
-noremap <C-F> 5k
+noremap <C-D> <C-U>
+noremap <C-F> <C-D>
 noremap <Space> 5k
 noremap <S-Enter> <PageDown>
 noremap <S-Space> <PageUp>
@@ -237,10 +249,10 @@ inoremap <c-a-;> <Esc><Cmd>write<CR>
 noremap <c-a-;> <Cmd>write<CR>
 inoremap <c-s-g> <Esc><Cmd>execute "grep " .. expand("<cword>")<CR>
 noremap <c-s-g> <Cmd>execute "grep " .. expand("<cword>")<CR>
-# inoremap <c-s-i> <Cmd>tabnext<CR>
-# noremap <c-s-i> <Cmd>tabnext<CR>
-# inoremap <c-s-u> <Cmd>tabprevious<CR>
-# noremap <c-s-u> <Cmd>tabprevious<CR>
+inoremap <c-s-i> <Cmd>tabnext<CR>
+noremap <c-s-i> <Cmd>tabnext<CR>
+inoremap <c-s-u> <Cmd>tabprevious<CR>
+noremap <c-s-u> <Cmd>tabprevious<CR>
 
 # const pattern = '\m\([/*|=>]$|@\s+.*\)'
 noremap <c-a-b> <Cmd>silent edit %:h <Bar> call search('^\V' .. expand("#:t") .. '\m\($\\|[/*\|=>]$\\|@\s+\)')<CR>
