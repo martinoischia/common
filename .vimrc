@@ -201,7 +201,7 @@ noremap <Leader>d <Cmd>colorscheme default<CR>
 #           [ &kp C_BRI_DN   &kp C_BRI_UP     &kp C_PREV     &kp C_NEXT       &kp C_PP ]                                                                                    [ &kp C_MUTE   &kp C_VOL_DN      &kp C_VOL_UP ]            &none  &kp PAUSE_BREAK
 #                [&kp F11]          &none          &none          &none          &none          &none                                                                 &none  &kp KP_NUM  &kp LC(LA(I))     &kp LC(LA(L))     &kp LC(LA(X))  [&kp F12]
 #                &trans  &kp LC(LS(Q))  &kp LC(LS(W))  &kp changeme  [&kp LC(LS(R))]  &kp LC(LS(T))                                                         &kp LC(LS(Y))   [&kp LC(LS(U))      &kp LC(LS(I))]         &kp LA(O)     [&kp KP_N9]   &kp LC(LA(N6))
-#                &trans  &kp LC(LS(A))  &kp LC(LS(S))  &kp LC(LA(D))  &kp LA(F)  [&kp LC(LS(G))]                                                         &kp LC(LS(H))   [&kp KP_N0      &kp KP_N1         &kp KP_N2         &kp LC(LA(SEMI))]   &none
+#                &trans  &kp LC(LS(A))  &kp LC(LS(S))  &kp LC(LA(D))  &kp LA(F)  [&kp LC(LS(G))]                                                         [&kp LC(LS(H))   &kp KP_N0      &kp KP_N1         &kp KP_N2         &kp LC(LA(SEMI))]   &none
 #                &trans      &kp K_APP          &kp LC(LS(X))        &kp LC(LS(C))        &kp LC(LS(V))      &kp LC(LS(B))                               &trans  &trans  &trans  &trans  &trans &kp LC(LA(SPACE))                                  &none   &kp BSPC      &kp COMMA         &kp DOT   &kp LC(LA(DOT))    [&kp LC(PG_UP)]
 #  &magic LAYER_Magic 0          &none        &kp INS        &trans        &trans                                                              &trans  &trans  &trans  &trans  &trans  &trans                                &kp LC(MINUS)          &kp LC(EQUAL)  &kp LC(LA(LBKT))  &kp LC(LA(RBKT))    [&kp LC(PG_DN)]
 #
@@ -225,7 +225,9 @@ noremap <S-Enter> <PageDown>
 noremap <S-Space> <PageUp>
 noremap <C-S-F> <PageDown>
 noremap <C-S-D> <PageUp>
-inoremap <C-V> <C-X><C-O>
+#inoremap <C-V> <C-X><C-O>
+inoremap <C-V> <C-O>"+p
+noremap <C-V> "+p
 if has("unix") #to debug on win
 	noremap <c-s-r> <Cmd>call ToggleCursor()<CR>
 endif
