@@ -180,7 +180,7 @@ nnoremap Y y$
 noremap H K
 noremap K <C-]>
 nnoremap L <C-T>
-noremap t <Cmd>tabnew<CR>
+noremap <c-n> <Cmd>tabnew<CR>
 
 noremap <expr> n 'Nn'[v:searchforward]
 noremap <expr> N 'nN'[v:searchforward]
@@ -225,8 +225,8 @@ noremap <C-F> <C-D>
 noremap <Space> 5k
 noremap <S-Enter> <PageDown>
 noremap <S-Space> <PageUp>
-noremap <C-S-F> <PageUp>
-noremap <C-S-D> <PageDown>
+noremap <C-S-F> <PageDown>
+noremap <C-S-D> <PageUp>
 inoremap <C-V> <C-X><C-O>
 if has("unix") #to debug on win
 	noremap <c-s-r> <Cmd>call ToggleCursor()<CR>
