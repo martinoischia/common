@@ -172,8 +172,6 @@ endif
 
 nnoremap <Left> <Cmd>cprevious<CR>
 nnoremap <Right> <Cmd>cnext<CR>
-noremap <S-Tab> <C-I>
-noremap <Tab> <C-O>
 noremap <BS> <C-6>
 noremap <S-BS> <C-6>
 nnoremap Y y$
@@ -265,7 +263,6 @@ noremap <c-s-a-b> <Cmd>silent edit .<CR>
 noremap <c-p> "*p
 vnoremap <c-c> "+y
 
-noremap <c-n> "+p
 ############################################################################
 
 augroup term
@@ -358,6 +355,9 @@ command! -bang Q quit<bang>
 command! -bang Qa qall<bang>
 command! -bang QA qall<bang>
 nnoremap <C-w>a <Cmd>qall<CR>
+noremap <S-Tab> <Tab>
+# important to be remapped after c-(s)-i (see help ctrl-i)
+noremap <Tab> <C-O>
 
 if has("unix")
 	noremap <D-r> <Cmd>terminal<CR>
