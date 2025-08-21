@@ -228,6 +228,10 @@ noremap <C-S-D> <PageUp>
 #inoremap <C-V> <C-X><C-O>
 inoremap <C-V> <C-O>"+p
 noremap <C-V> "+p
+inoremap <C-T> <C-V>
+noremap <C-T> <C-V>
+cnoremap <C-T> <C-V>
+cnoremap <C-V> <C-R>+
 if has("unix") #to debug on win
 	noremap <c-s-r> <Cmd>call ToggleCursor()<CR>
 endif
@@ -273,6 +277,8 @@ augroup term
 augroup END
 
 tnoremap <Esc> <C-w>N
+tnoremap <PageUp> <C-w>N<PageUp>
+tnoremap <PageDown> <C-w>N<PageDown>
 tnoremap <C-PageUp> <cmd>tabprevious<CR>
 tnoremap <C-PageDown> <cmd>tabnext<CR>
 
