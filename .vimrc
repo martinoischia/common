@@ -281,6 +281,8 @@ tnoremap <PageUp> <C-w>N<PageUp>
 tnoremap <PageDown> <C-w>N<PageDown>
 tnoremap <C-PageUp> <cmd>tabprevious<CR>
 tnoremap <C-PageDown> <cmd>tabnext<CR>
+tnoremap <ScrollWheelUp> <C-w>N3<c-y>
+tnoremap <ScrollWheelDown> <C-w>N
 
 #inoremap <c-w><c-w> <esc><c-w><c-w>gi
 #inoremap <c-w>j <esc><c-w>jgi
@@ -395,7 +397,7 @@ if has('eval')
 	#g:netrw_liststyle = 3
 	g:netrw_winsize   = 30
 
-	g:netrw_sort_sequence = 'vim_todo,^[^.].*[\/]$,\<core\%(\.\d\+\)\=\>,\.h$,\.c$,\.cpp$,\~\=\*$,*,^\..*[\/]$,^\.,node_modules[\/],\.o$,\.obj$,\.info$,\.bak$,\~$'
+	g:netrw_sort_sequence = '.current,^[^.].*[\/]$,\<core\%(\.\d\+\)\=\>,\.h$,\.c$,\.cpp$,\~\=\*$,*,^\..*[\/]$,^\.,node_modules[\/],\.o$,\.obj$,\.info$,\.bak$,\~$'
 	g:netrw_list_hide = '^\./\?$,^\.\./\?$,\.swp$,\.swo$'
 	if has("win32")
 		g:netrw_localmovecmd = 'C:\Program Files\Git\usr\bin\mv.exe'
