@@ -216,7 +216,8 @@ augroup quickfix_binding
   autocmd!
   autocmd BufWinEnter * If_qf()
 augroup END
-
+noremap <C--> <cmd>cpfile<CR>
+noremap <C-=> <cmd>cnfile<CR>
 noremap <Enter> 5j
 noremap <C-D> <C-U>
 noremap <C-F> <C-D>
@@ -352,6 +353,10 @@ set gdefault
 # zz is easier to type
 nnoremap <Up> <c-y>
 nnoremap <Down> <c-e>
+noremap ( [(
+noremap ) ])
+noremap { [{
+noremap } ]}
 nnoremap zt zz
 nnoremap zz zt
 cabbrev cw bo cw
