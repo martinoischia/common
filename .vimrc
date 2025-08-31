@@ -265,9 +265,9 @@ noremap <c-a-b> <Cmd>silent edit %:h <Bar> call search('^\V' .. expand("#:t") ..
 
 noremap <c-s-a-b> <Cmd>silent edit .<CR>
 
-# clipboard.. you probably should reread in the doc of win32 says something about ctrlc ctrl v
-# primary
+# using primary
 noremap <c-p> "*p
+# and filling clipboard register
 vnoremap <c-c> "+y
 
 ############################################################################
@@ -281,9 +281,12 @@ tnoremap <Esc> <C-w>N
 tnoremap <PageUp> <C-w>N<PageUp>
 tnoremap <PageDown> <C-w>N<PageDown>
 tnoremap <C-PageUp> <cmd>tabprevious<CR>
+cnoremap <C-PageUp> <cmd>tabprevious<CR>
 tnoremap <C-PageDown> <cmd>tabnext<CR>
+cnoremap <C-PageDown> <cmd>tabnext<CR>
 tnoremap <ScrollWheelUp> <C-w>N3<c-y>
 tnoremap <ScrollWheelDown> <C-w>N
+noremap <MiddleMouse> i
 
 #inoremap <c-w><c-w> <esc><c-w><c-w>gi
 #inoremap <c-w>j <esc><c-w>jgi
