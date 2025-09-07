@@ -53,6 +53,7 @@ endif
 # autocmd VimResized * set scroll=5
 
 if has('eval')
+	# normally the correct way to call an s: instead of g: is <SID>SetGGrep()
 	def! g:SetGGrep()
 		if  !empty(g:FugitiveExtractGitDir(getcwd()))
 			set grepprg=git\ grep\ -n
@@ -96,6 +97,24 @@ endif
 set nonumber
 set ignorecase
 set smartcase
+# def CaseHelper(cmd: string)
+# 	set noignorecase
+# 	final mmm = "normal! " .. cmd
+# 	echo mmm
+# 	silent execute mmm
+# 	set ignorecase
+# 	set smartcase
+# enddef
+# noremap * <Cmd>call <SID>CaseHelper("*")<CR>
+# noremap g* <Cmd>call <SID>CaseHelper("g*")<CR>
+# noremap # <Cmd>call <SID>CaseHelper("#")<CR>
+# noremap g# <Cmd>call <SID>CaseHelper("g#")<CR>
+nnoremap <silent> * :let @/='\C\<' . expand('<cword>') . '\>'<CR>n
+# need fix
+nnoremap <silent> # :let @/='\C\<' . expand('<cword>') . '\>'<CR>N
+# nnoremap <silent> g* :let @/='\C' . expand('<cword>')<CR>n
+# nnoremap <silent> g# :let @/='\C' . expand('<cword>')<CR>N
+
 set hlsearch
 set incsearch
 set history=1000
@@ -336,6 +355,16 @@ augroup END
 set errorformat^=%-G%f:%l:\ warning:%m
 
 set diffopt+=vertical,hiddenoff
+augroup diffString
+	autocmd!
+	autocmd OptionSet diff {
+		if v:option_old == '1'
+			hi clear
+		else
+			hi clear String
+		endif
+	}
+augroup END
 
 # Auto close brackets
 # most usable
