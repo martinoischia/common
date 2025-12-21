@@ -189,6 +189,10 @@ if !exists(":DiffOrig")
 		  \ | wincmd p | diffthis
 endif
 
+if !exists(":Diffro")
+	command! -nargs=1 -complete=file Diffro vertical diffsplit <args> | windo setlocal readonly | wincmd p
+endif
+
 nnoremap <Left> <Cmd>cprevious<CR>
 nnoremap <Right> <Cmd>cnext<CR>
 noremap <BS> <C-6>
@@ -238,6 +242,7 @@ augroup END
 noremap <C--> <cmd>cpfile<CR>
 noremap <C-=> <cmd>cnfile<CR>
 noremap <Enter> 5j
+autocmd CmdwinEnter * noremap <buffer> <Enter> <Enter>
 noremap <C-D> <C-U>
 noremap <C-F> <C-D>
 noremap <Space> 5k
