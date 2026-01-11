@@ -360,15 +360,30 @@ augroup END
 set errorformat^=%-G%f:%l:\ warning:%m
 
 set diffopt+=vertical,hiddenoff
+
+var savedStringHl: list<dict<any>> = []
+def HandleDiffHighlight()
+    if (v:option_new == '1')
+        # Entering diff mode - save and clear
+        if empty(savedStringHl)
+            savedStringHl = hlget('String')
+        endif
+        hi clear String
+    else
+        # Leaving diff mode - restore
+        if !empty(savedStringHl)
+            hlset(savedStringHl)
+            savedStringHl = []
+        endif
+    endif
+enddef
 augroup diffString
-	autocmd!
-	autocmd OptionSet diff {
-		if v:option_old == '1'
-			hi clear
-		else
-			hi clear String
-		endif
-	}
+    autocmd!
+    autocmd OptionSet diff HandleDiffHighlight()
+augroup END
+
+augroup diffSpace
+	autocmd FileType python,javascript,java,c,cpp,go,rust,dart setlocal diffopt+=iwhite
 augroup END
 
 # Auto close brackets
