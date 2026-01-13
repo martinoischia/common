@@ -53,7 +53,6 @@ endif
 # autocmd VimResized * set scroll=5
 
 if has('eval')
-	# normally the correct way to call an s: instead of g: is <SID>SetGGrep()
 	def! g:SetGGrep()
 		if  !empty(g:FugitiveExtractGitDir(getcwd()))
 			set grepprg=git\ grep\ -n
@@ -278,7 +277,8 @@ inoremap <c-a-;> <Esc><Cmd>write<CR>
 noremap <c-a-;> <Cmd>write<CR>
 inoremap <c-s-g> <Esc><Cmd>execute "grep " .. expand("<cword>")<CR>
 noremap <c-s-g> <Cmd>execute "grep " .. expand("<cword>")<CR>
-inoremap <c-s-i> <Cmd>tabnext<CR>
+vnoremap <c-s-g> y<Cmd>execute "grep " .. shellescape(@")<CR>
+# inoremap <c-s-i> <Cmd>tabnext<CR>
 noremap <c-s-i> <Cmd>tabnext<CR>
 inoremap <c-s-u> <Cmd>tabprevious<CR>
 noremap <c-s-u> <Cmd>tabprevious<CR>
