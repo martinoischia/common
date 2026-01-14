@@ -361,19 +361,24 @@ set errorformat^=%-G%f:%l:\ warning:%m
 
 set diffopt+=vertical,hiddenoff
 
-var savedStringHl: list<dict<any>> = []
+const diffClearGroups = ['Constant', 'Title', 'WarningMsg']
+var beforeDiffHighlights: list<dict<any>> = []
 def HandleDiffHighlight()
     if (v:option_new == '1')
         # Entering diff mode - save and clear
-        if empty(savedStringHl)
-            savedStringHl = hlget('String')
+        if empty(beforeDiffHighlights)
+            for group in diffClearGroups
+                beforeDiffHighlights += hlget(group)
+            endfor
         endif
-        hi clear String
+        for group in diffClearGroups
+            exe 'hi clear' group
+        endfor
     else
         # Leaving diff mode - restore
-        if !empty(savedStringHl)
-            hlset(savedStringHl)
-            savedStringHl = []
+        if !empty(beforeDiffHighlights)
+            hlset(beforeDiffHighlights)
+            beforeDiffHighlights = []
         endif
     endif
 enddef
