@@ -14,7 +14,10 @@ vim9script
 set textwidth=79
 if has("win32")
 	set shell=\"C:\Program\ Files\Git\bin\sh.exe\"
+	# should be already handled by guioptions
+	# set winaltkeys=no
 	set isfname-=:
+	# I think for complex keys (alt combos of my glove)
 	autocmd GUIEnter * call test_mswin_event('set_keycode_trans_strategy', { 'strategy': 'experimental'})
 endif
 
@@ -319,6 +322,8 @@ noremap <MiddleMouse> i
 #inoremap <c-w>l <esc><c-w>lgi
 
 inoremap <c-z> <esc><c-z>
+
+set foldopen-=search
 
 # Search for selected text, forwards or backwards.
 vnoremap <silent> * :<C-U>
