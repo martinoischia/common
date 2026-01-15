@@ -10,3 +10,7 @@
 	fallbackToNoIndex = true
 [init]
 	defaultBranch = master
+[diff]
+    external = difft
+[advice]
+	detachedHead = false

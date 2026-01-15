@@ -393,7 +393,7 @@ augroup diffString
 augroup END
 
 augroup diffSpace
-	autocmd FileType python,javascript,java,c,cpp,go,rust,dart setlocal diffopt+=iwhite
+	autocmd FileType python,javascript,java,c,cpp,go,prisma,rust,dart setlocal diffopt+=iwhite
 augroup END
 
 # Auto close brackets
