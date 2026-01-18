@@ -56,6 +56,7 @@ endif
 # autocmd VimResized * set scroll=5
 
 if has('eval')
+    # normally the correct way to call an s: instead of g: is <SID>SetGGrep()
 	def! g:SetGGrep()
 		if  !empty(g:FugitiveExtractGitDir(getcwd()))
 			set grepprg=git\ grep\ -n
@@ -252,11 +253,17 @@ noremap <S-Enter> <PageDown>
 noremap <S-Space> <PageUp>
 noremap <C-S-F> <PageDown>
 noremap <C-S-D> <PageUp>
+
 #inoremap <C-V> <C-X><C-O>
-inoremap <C-V> <C-O>"+p
-noremap <C-V> "+p
+if has("clipboard")
+    legacy exe 'inoremap <script> <C-V> <C-G>u' . paste#paste_cmd['i']
+    legacy exe 'vnoremap <script> <C-V> ' . paste#paste_cmd['v']
+endif
+noremap <C-V> "+gP
 inoremap <C-T> <C-V>
 noremap <C-T> <C-V>
+tnoremap <C-T> <C-V>
+tnoremap <C-v> <C-W>"+
 cnoremap <C-T> <C-V>
 cnoremap <C-V> <C-R>+
 if has("unix") #to debug on win
