@@ -276,6 +276,8 @@ noremap <c-s-a-f> <Cmd>vert split %:h<CR>
 noremap  <c-s-e> :find<Space>*
 inoremap <c-s-e> <Esc>:find<Space>*
 cnoremap <c-s-e> <Esc>:find<Space>*
+noremap  <c-a-e> <Cmd>G<CR>
+inoremap <c-a-e> <Cmd>G<CR>
 noremap  <c-e> :b<Space>
 inoremap <c-e> <Esc>:b<Space>
 cnoremap <c-e> <Esc>:b<Space>
