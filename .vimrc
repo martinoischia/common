@@ -287,9 +287,12 @@ noremap <a-s-f> gF
 inoremap <c-s-y> <C-x><C-u>
 inoremap <c-a-;> <Esc><Cmd>write<CR>
 noremap <c-a-;> <Cmd>write<CR>
-inoremap <c-s-g> <Esc><Cmd>execute "grep " .. expand("<cword>")<CR>
-noremap <c-s-g> <Cmd>execute "grep " .. expand("<cword>")<CR>
-vnoremap <c-s-g> y<Cmd>execute "grep " .. shellescape(@")<CR>
+# expand or shellescape? not sure if any diff in next two
+inoremap <c-s-g> <Esc><Cmd>execute "grep " .. shellescape("<cword>")<CR>
+noremap <c-s-g> <Cmd>execute "grep " .. shellescape("<cword>")<CR>
+# double also the outer ", because otherwise become sh -c "git grep "stuff"",
+# which is not good
+vnoremap <c-s-g> y<Cmd>execute "grep \"" .. shellescape(@", 1) .. "\""<CR>
 # inoremap <c-s-i> <Cmd>tabnext<CR>
 noremap <c-s-i> <Cmd>tabnext<CR>
 inoremap <c-s-u> <Cmd>tabprevious<CR>
