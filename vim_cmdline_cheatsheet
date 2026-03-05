@@ -8,6 +8,9 @@ after ~ in command mode devi espanderla alla home se la vuoi usare come home
 
 :put reg
 
-:grepadd 	since it is a strange command to open a new quickfix list, try use :ldo
+:grepadd, :cfdo (per file)
+
+:sort /pattern/, fa sort su tutto cio' che viene dopo pattern
+:sort r /pattern/, o :sort /pattern/ r fa sort su pattern
 
 " vim:ft=help

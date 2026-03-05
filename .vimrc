@@ -57,6 +57,7 @@ endif
 
 if has('eval')
     # normally the correct way to call an s: instead of g: is <SID>SetGGrep()
+	#  wait, maybe <ScriptCmd> is the way?
 	def! g:SetGGrep()
 		if  !empty(g:FugitiveExtractGitDir(getcwd()))
 			set grepprg=git\ grep\ -n
@@ -242,6 +243,19 @@ augroup quickfix_binding
   autocmd!
   autocmd BufWinEnter * If_qf()
 augroup END
+# dd and visual d to remove from quickfix
+def RemoveQFItems(first: number, last: number)
+  var qfall = getqflist()
+  for i in range(last - 1, first - 1, -1)
+    remove(qfall, i)
+  endfor
+  setqflist(qfall, 'r')
+  copen
+enddef
+autocmd FileType qf map  <buffer> dd <ScriptCmd>RemoveQFItems(line('.'), line('.'))<cr>
+autocmd FileType qf vmap <buffer> d  <ScriptCmd>RemoveQFItems(line("'<"), line("'>"))<cr>
+
+
 noremap <C--> <cmd>cpfile<CR>
 noremap <C-=> <cmd>cnfile<CR>
 noremap <Enter> 5j
