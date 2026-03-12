@@ -57,7 +57,7 @@ endif
 
 if has('eval')
     # normally the correct way to call an s: instead of g: is <SID>SetGGrep()
-	#  wait, maybe <ScriptCmd> is the way?
+	#  wait, maybe <ScriptCmd> is the way? -> solo per autocomandi
 	def! g:SetGGrep()
 		if  !empty(g:FugitiveExtractGitDir(getcwd()))
 			set grepprg=git\ grep\ -n
@@ -252,8 +252,8 @@ def RemoveQFItems(first: number, last: number)
   setqflist(qfall, 'r')
   copen
 enddef
-autocmd FileType qf map  <buffer> dd <ScriptCmd>RemoveQFItems(line('.'), line('.'))<cr>
-autocmd FileType qf vmap <buffer> d  <ScriptCmd>RemoveQFItems(line("'<"), line("'>"))<cr>
+autocmd FileType qf map  <buffer> dd <ScriptCmd>RemoveQFItems(line('.'), line('.'))<CR>
+autocmd FileType qf vmap <buffer> d  <ScriptCmd>RemoveQFItems(line("'<"), line("'>"))<CR>
 
 
 noremap <C--> <cmd>cpfile<CR>
@@ -365,12 +365,6 @@ vnoremap <silent> # :<C-U>
 # remove this?
 vnoremap // y/\V<C-R>=escape(@",'/\')<CR><CR>
 
-if has("win32")
-	command! TerCur term ++curwin
-	command! TermCur term ++curwin
-	command! TerminalCur term ++curwin
-endif
-
 augroup exrc # fuck 'exrc'
 	autocmd!
 	autocmd DirChanged * if filereadable(".vimrc") && getcwd() != expand('~') | source .vimrc | endif
@@ -441,12 +435,25 @@ set gdefault
 # zz is easier to type
 nnoremap <Up> <c-y>
 nnoremap <Down> <c-e>
-noremap ( [(
-noremap ) ])
-noremap { [{
-noremap } ]}
+
+augroup parenthesis
+    autocmd!
+    autocmd FileType * MapParens()
+augroup END
+
+def MapParens()
+    const excluded = ['text', 'markdown', 'mail', 'rst', 'tex', 'asciidoc', 'help', '']
+    if index(excluded, &filetype) < 0
+        noremap <buffer> ( [(
+        noremap <buffer> ) ])
+		noremap <buffer> { [{
+		noremap <buffer> } ]}
+    endif
+enddef
+
 nnoremap zt zz
 nnoremap zz zt
+nnoremap z[ zoz] // go to end of fold
 cabbrev cw bo cw
 command! Vs vert split
 command! W write
@@ -463,9 +470,25 @@ noremap <S-Tab> <Tab>
 noremap <Tab> <C-O>
 
 if has("unix")
-	noremap <D-r> <Cmd>terminal<CR>
-	noremap <D-t> <Cmd>terminal ++curwin<CR>
+    noremap <D-r> <Cmd>terminal<CR>
+    noremap <D-t> <Cmd>terminal ++curwin<CR>
+    noremap <D-S-t> <Cmd>call TerCurDirFunc()<CR>
 endif
+if has("win32")
+    command! TerCur term ++curwin
+    command! TerCurDir call TerCurDirFunc()
+endif
+def TerCurDirFunc()
+    if &filetype ==# 'netrw'
+        var dir = b:netrw_curdir
+        execute 'lcd ' .. fnameescape(dir)
+		term ++curwin
+        dir = getcwd(-1)
+        execute 'lcd ' .. fnameescape(dir)
+	else
+		term ++curwin
+    endif
+enddef
 
 # dont like this characters but you could customize this
 #   :set list
