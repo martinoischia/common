@@ -116,6 +116,19 @@ set smartcase
 nnoremap <silent> * :let @/='\C\<' . expand('<cword>') . '\>'<CR>n
 # need fix
 nnoremap <silent> # :let @/='\C\<' . expand('<cword>') . '\>'<CR>N
+
+def CleanedSearchReg(): string
+    var pat = @/
+    pat = substitute(pat, '\\[<>]', '', 'g')
+    pat = substitute(pat, '^\\V', '', '')
+    pat = substitute(pat, '^\\C', '', '')
+    return pat
+enddef
+
+# find good keybinding and test
+cnoremap <C-x> <C-r>=<SID>CleanedSearchReg()<CR>
+inoremap <C-x> <C-r>=<SID>CleanedSearchReg()<CR>
+noremap <C-x> "=<SID>CleanedSearchReg()<CR>
 # nnoremap <silent> g* :let @/='\C' . expand('<cword>')<CR>n
 # nnoremap <silent> g# :let @/='\C' . expand('<cword>')<CR>N
 
@@ -301,12 +314,25 @@ noremap <a-s-f> gF
 inoremap <c-s-y> <C-x><C-u>
 inoremap <c-a-;> <Esc><Cmd>write<CR>
 noremap <c-a-;> <Cmd>write<CR>
-# expand or shellescape? not sure if any diff in next two
-inoremap <c-s-g> <Esc><Cmd>execute "grep " .. shellescape("<cword>")<CR>
-noremap <c-s-g> <Cmd>execute "grep " .. shellescape("<cword>")<CR>
+def GrepCword()
+    var cmd = "grep " .. shellescape(expand("<cword>"))
+    histadd(':', cmd)
+    execute cmd
+enddef
+
+# originally like this, time will tell if fine:
 # double also the outer ", because otherwise become sh -c "git grep "stuff"",
 # which is not good
-vnoremap <c-s-g> y<Cmd>execute "grep \"" .. shellescape(@", 1) .. "\""<CR>
+# vnoremap <c-s-g> y<Cmd>execute "grep \"" .. shellescape(@", 1) .. "\""<CR>
+def GrepVisual()
+    var cmd = 'grep "' .. shellescape(@", 1) .. '"'
+    histadd(':', cmd)
+    execute cmd
+enddef
+
+inoremap <c-s-g> <Esc><Cmd>call <SID>GrepCword()<CR>
+noremap <c-s-g> <Cmd>call <SID>GrepCword()<CR>
+vnoremap <c-s-g> y<Cmd>call <SID>GrepVisual()<CR>
 # inoremap <c-s-i> <Cmd>tabnext<CR>
 noremap <c-s-i> <Cmd>tabnext<CR>
 inoremap <c-s-u> <Cmd>tabprevious<CR>
@@ -455,6 +481,7 @@ nnoremap zt zz
 nnoremap zz zt
 nnoremap z[ zoz] // go to end of fold
 cabbrev cw bo cw
+cnoremap <expr> / getcmdtype() == ':' && getcmdline() =~ "\\v^(\\%\\|'\\<,'\\>)?s$" ? '//<Left>' : '/'
 command! Vs vert split
 command! W write
 command! Wa wall
