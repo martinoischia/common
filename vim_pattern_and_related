@@ -1,3 +1,15 @@
+*outside_pattern,for_motion*
+
+//{offset}<CR>
+??{offset}<CR>
+
+Examples:
+/test/+1		one line below, column 1
+/test/e			end, inclusive
+/test/s+2		on 3rd
+/test/s-3		three characters before "test"
+
+
 */magic-vs-literal-(\V)-and-case-sensitivity*
 
 Magic is a default option, and should never be changed.
@@ -12,10 +24,13 @@ after:	  \v	   \m	    \M	     \V		matches ~
 		  \\	   \\	    \\	     \\		literal backslash
 
 Magic:
+
  ~ means the last substituted string (to find where it is I suppose)
- \(\) are for group
  [] are collections (\_[] to include EOL)
  * is the only non backslashed multi (quantifier)
+ ^,$ for start end
+
+ \(\) are for group
  \| is the or
  \< e \> are ends of word
 

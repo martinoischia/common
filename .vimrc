@@ -37,12 +37,13 @@ set spelllang=it
 set sidescroll=1
 set sidescrolloff=1
 
-if (argc() == 0)
+if (argc() == 0) && !get(g:, 'loaded_vimrc', false)
 	silent edit ~/
 	if has("win32")
 		cd ~/
 	endif
 endif
+g:loaded_vimrc = true
 
 set laststatus=2
 set statusline=[%n]%<%f\ %h%m%r%y%=%-14.(%l,%c%)\ %P
@@ -57,7 +58,8 @@ endif
 
 if has('eval')
     # normally the correct way to call an s: instead of g: is <SID>SetGGrep()
-	#  wait, maybe <ScriptCmd> is the way? -> solo per autocomandi
+	#  wait, maybe <ScriptCmd> is the way? -> solo per autocomandi (ma
+	#  autocomandi vogliono la sintassi legacy, unless inside a def)
 	def! g:SetGGrep()
 		if  !empty(g:FugitiveExtractGitDir(getcwd()))
 			set grepprg=git\ grep\ -n
@@ -92,10 +94,10 @@ if has('eval')
 	enddef
 
 
-	command! -nargs=? MTemporary call SaveToTemp(<f-args>)
-	command! -nargs=? Mtemporary call SaveToTemp(<f-args>)
-	command! -nargs=? MkTemporary call SaveToTemp(<f-args>)
-	command! -nargs=? MKTemporary call SaveToTemp(<f-args>)
+	command -nargs=? MTemporary call SaveToTemp(<f-args>)
+	command -nargs=? Mtemporary call SaveToTemp(<f-args>)
+	command -nargs=? MkTemporary call SaveToTemp(<f-args>)
+	command -nargs=? MKTemporary call SaveToTemp(<f-args>)
 endif
 
 set nonumber
@@ -207,7 +209,7 @@ if !exists(":DiffOrig")
 endif
 
 if !exists(":Diffro")
-	command! -nargs=1 -complete=file Diffro vertical diffsplit <args> | windo setlocal readonly | wincmd p
+	command -nargs=1 -complete=file Diffro vertical diffsplit <args> | windo setlocal readonly | wincmd p
 endif
 
 nnoremap <Left> <Cmd>cprevious<CR>
@@ -314,8 +316,14 @@ noremap <a-s-f> gF
 inoremap <c-s-y> <C-x><C-u>
 inoremap <c-a-;> <Esc><Cmd>write<CR>
 noremap <c-a-;> <Cmd>write<CR>
+
+### Time-test (for this and visual version): is this necessary on Unix? and
+# this forces me to \\ to put one \. Would this happen with ' instead of "?
+#
+# Note: here I put doubled "" just if I then need add escaped things, being a single word
+# probably here I could have used not even a single " (for sure one " worked)
 def GrepCword()
-    var cmd = "grep " .. shellescape(expand("<cword>"))
+    var cmd = 'grep "' .. shellescape(expand("<cword>")) .. '"'
     histadd(':', cmd)
     execute cmd
 enddef
@@ -392,11 +400,21 @@ vnoremap <silent> # :<C-U>
 vnoremap // y/\V<C-R>=escape(@",'/\')<CR><CR>
 
 augroup exrc # fuck 'exrc'
+	def Symbolic_rc(dir: string)
+		if has("unix")
+			if (filereadable(".vimrc") && (resolve(dir .. '/.vimrc') != resolve(expand('~/.vimrc'))))
+				source .vimrc
+			endif
+		# sarebbe da fare la versione per windows
+		else
+			source .vimrc
+		endif
+	enddef
 	autocmd!
-	autocmd DirChanged * if filereadable(".vimrc") && getcwd() != expand('~') | source .vimrc | endif
-	autocmd DirChanged global if filereadable(".vimrc") && getcwd() != expand('~') | source .vimrc | endif
-	autocmd DirChanged tabpage if filereadable(".vimrc") && getcwd() != expand('~') | source .vimrc | endif
-	autocmd DirChanged window if filereadable(".vimrc") && getcwd() != expand('~') | source .vimrc | endif
+	autocmd DirChanged * Symbolic_rc(expand('<afile>'))
+	autocmd DirChanged global Symbolic_rc(expand('<afile>'))
+	autocmd DirChanged tabpage Symbolic_rc(expand('<afile>'))
+	autocmd DirChanged window Symbolic_rc(expand('<afile>'))
 augroup END
 
 # In TUI Vim, <C-S-letter> is indistinguishable from <C-letter>. You should change them to more portable combos.
@@ -482,15 +500,15 @@ nnoremap zz zt
 nnoremap z[ zoz] // go to end of fold
 cabbrev cw bo cw
 cnoremap <expr> / getcmdtype() == ':' && getcmdline() =~ "\\v^(\\%\\|'\\<,'\\>)?s$" ? '//<Left>' : '/'
-command! Vs vert split
-command! W write
-command! Wa wall
-command! WA wall
-command! Wq wq
-command! WQ wq
-command! -bang Q quit<bang>
-command! -bang Qa qall<bang>
-command! -bang QA qall<bang>
+command Vs vert split
+command W write
+command Wa wall
+command WA wall
+command Wq wq
+command WQ wq
+command -bang Q quit<bang>
+command -bang Qa qall<bang>
+command -bang QA qall<bang>
 nnoremap <C-w>a <Cmd>qall<CR>
 noremap <S-Tab> <Tab>
 # important to be remapped after c-(s)-i (see help ctrl-i)
@@ -502,8 +520,8 @@ if has("unix")
     noremap <D-S-t> <Cmd>call TerCurDirFunc()<CR>
 endif
 if has("win32")
-    command! TerCur term ++curwin
-    command! TerCurDir call TerCurDirFunc()
+    command TerCur term ++curwin
+    command TerCurDir call TerCurDirFunc()
 endif
 def TerCurDirFunc()
     if &filetype ==# 'netrw'
