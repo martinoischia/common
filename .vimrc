@@ -369,30 +369,75 @@ if !exists(":DiffOrig")
 		  \ | wincmd p | diffthis
 endif
 
-if !exists(":Diffro")
-	command -nargs=1 -complete=file Diffro vertical diffsplit <args> | windo setlocal readonly | wincmd p
+if !exists(":DiffRO")
+	command -nargs=1 -complete=file DiffRO vertical diffsplit <args> | windo setlocal readonly | wincmd p
 endif
 
 set diffopt+=vertical,hiddenoff
 
+# colors stuff, fixes some hl in diff mode are not visible
+# (not perfect because WinEnter does not suffice, but for my purposes seems
+# more than enough good) [unfortunately highlight groups are global]
 const diffClearGroups = ['Constant', 'Title', 'WarningMsg']
-var beforeDiffHighlights: list<dict<any>> = []
+var oldDiffHighlights: list<dict<any>> = []
+var diffHighlightsCleared = false
+
+def DiffClearHL()
+    if diffHighlightsCleared
+        return
+    endif
+    if empty(oldDiffHighlights)
+        for group in diffClearGroups
+            oldDiffHighlights += hlget(group)
+        endfor
+    endif
+    for group in diffClearGroups
+        exe 'hi clear' group
+    endfor
+    diffHighlightsCleared = true
+enddef
+
+def DiffRestoreHL()
+    if !diffHighlightsCleared
+        return
+    endif
+    if !empty(oldDiffHighlights)
+        hlset(oldDiffHighlights)
+        oldDiffHighlights = []
+    endif
+    diffHighlightsCleared = false
+enddef
+
+def DiffSyncHL()
+    if &diff
+        DiffClearHL()
+    else
+        DiffRestoreHL()
+    endif
+enddef
+
 def HandleDiffHighlight()
     if (v:option_new == '1')
-        # Entering diff mode - save and clear
-        if empty(beforeDiffHighlights)
-            for group in diffClearGroups
-                beforeDiffHighlights += hlget(group)
-            endfor
-        endif
-        for group in diffClearGroups
-            exe 'hi clear' group
-        endfor
+        DiffClearHL()
+        autocmd! diffString WinEnter
+        autocmd diffString WinEnter * DiffSyncHL()
     else
-        # Leaving diff mode - restore
-        if !empty(beforeDiffHighlights)
-            hlset(beforeDiffHighlights)
-            beforeDiffHighlights = []
+        DiffRestoreHL()
+        # remove the WinEnter autocmd if no window is still in diff
+        var any_diff = false
+        for tab in range(1, tabpagenr('$'))
+            for wnr in range(1, tabpagewinnr(tab, '$'))
+                if gettabwinvar(tab, wnr, '&diff')
+                    any_diff = true
+                    break
+                endif
+            endfor
+            if any_diff
+                break
+            endif
+        endfor
+        if !any_diff
+            autocmd! diffString WinEnter
         endif
     endif
 enddef
@@ -400,6 +445,8 @@ augroup diffString
     autocmd!
     autocmd OptionSet diff HandleDiffHighlight()
 augroup END
+# end color stuff
+
 
 augroup diffSpace
 	autocmd FileType python,javascript,java,c,cpp,go,prisma,rust,dart setlocal diffopt+=iwhite
