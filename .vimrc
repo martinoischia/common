@@ -2,12 +2,13 @@ vim9script
 # Recommended plugins:
 # 	linediff
 # 	tabulous
-# 	fugitive
-# 	gundo (need with-python compilation) -> p for preview diff with current
+# 	tpope surround, fugitive
+# 	gundo (need with-python compilation) -> p for preview diff with current (is
+# 	a bit small in that corner? is there a way to diffs it?)  or just undotree??
 # 	cmdlinecomplete
-# 	surround
 # 	? for C, C++ clang_complete, for python jedi_vim
 
+# Search for command to see all the UDC (two letter ones are just util)
 
 # Current language: "LC_CTYPE=en_US.UTF-8;LC_NUMERIC=C;LC_TIME=it_IT.UTF-8;LC_COLLATE=en_US.UTF-8;LC_MONETARY=it_IT.UTF-8;LC_MESSAGES=en_US.UTF-8;LC_PAPER=it_IT.UTF-8;LC_NAME=en_US.UTF-8;LC_ADDRESS=en_US.UTF-8;LC_TELEPHONE=en_US.UTF-8;LC_MEASUREMENT=it_IT.UTF-8;LC_IDENTIFICATION=en_US.UTF-8"
 
@@ -21,22 +22,7 @@ if has("win32")
 	autocmd GUIEnter * call test_mswin_event('set_keycode_trans_strategy', { 'strategy': 'experimental'})
 endif
 
-if has('eval')
-	augroup whitespace
-		autocmd!
-		autocmd BufWritePre * :%s/\s\+$//e
-	augroup END
-endif
-
-# Disable completing keywords in included files (e.g., #include in C).  When
-# configured properly, this can result in the slow, recursive scanning of
-# hundreds of files of dubious relevance.
-set complete-=i
-set spelllang=it
-
-set sidescroll=1
-set sidescrolloff=1
-
+# just at start up
 if (argc() == 0) && !get(g:, 'loaded_vimrc', false)
 	silent edit ~/
 	if has("win32")
@@ -45,21 +31,76 @@ if (argc() == 0) && !get(g:, 'loaded_vimrc', false)
 endif
 g:loaded_vimrc = true
 
+
+
+# Disable completing keywords in included files (e.g., #include in C).  When
+# configured properly, this can result in the slow, recursive scanning of
+# hundreds of files of dubious relevance.
+set complete-=i
+
+set spelllang=it
+set sidescroll=1
+set sidescrolloff=1
+
 set laststatus=2
 set statusline=[%n]%<%f\ %h%m%r%y%=%-14.(%l,%c%)\ %P
 if v:vim_did_enter && has('eval') && &rtp =~ 'vim-fugitive'
 	set statusline=[%n]%<%f\ %h%m%r%y%{FugitiveStatusline()}%=%-14.(%l,%c%)\ %P
 endif
 
+set history=1000
+set so=10 # scrolloff
+set nowrap
+set nonumber
+set smartindent
+set autoindent
+set shiftwidth=4
+set tabstop=4
+set shortmess-=S
+
+filetype plugin indent on
+if has('syntax')
+	syntax on
+endif
+if has('wildmenu')
+  set wildmenu
+  set wildoptions=pum
+endif
+if has('mksession')
+	# don't save options
+	set sessionoptions-=options
+endif
+set conceallevel=3
+
+if has("win32")
+	set guifont=Roboto_Mono:h14:cANSI:qDRAFT
+else
+	set guifont=Roboto\ Mono\ 14
+endif
+set guioptions-=m # normal alt menu
+set guioptions-=T # toolbar like save button
+set guioptions-=L # vertical split scrollbar left
+set guioptions-=r # vertical scrollbar right
+set mousemodel=popup
+set shiftround # just when type >> when you already have 2 spaces it just adds 2
+set backspace=indent,eol,start
+set splitright
+set splitbelow
+set formatoptions+=j # join
+
 # # statusline affects scroll?
 # set scroll=5
 # autocmd WinResized * set scroll=5
 # autocmd VimResized * set scroll=5
 
+
+####################################################################################################
+##### Search related stuff  ########################################################################
+
 if has('eval')
     # normally the correct way to call an s: instead of g: is <SID>SetGGrep()
-	#  wait, maybe <ScriptCmd> is the way? -> solo per autocomandi (ma
-	#  autocomandi vogliono la sintassi legacy, unless inside a def)
+	#  <ScriptCmd>? -> solo per autocomandi? (ma autocomandi vogliono la
+	#  sintassi legacy, unless inside a def)
 	def! g:SetGGrep()
 		if  !empty(g:FugitiveExtractGitDir(getcwd()))
 			set grepprg=git\ grep\ -n
@@ -79,30 +120,11 @@ if has('eval')
 	enddef
 	# To postepone the thing after plugins have loaded - I suppose
 	autocmd VimEnter * call Check_git_plugin()
-
-
-	def SaveToTemp(suffix: string = '')
-		var tmpfile: string
-		if suffix == ''
-			tmpfile = system('mktemp')
-		else
-			tmpfile = system('mktemp --suffix .' .. suffix)
-		endif
-		tmpfile = substitute(tmpfile, "\n", '', '') # Remove trailing newline
-
-		execute 'edit ' .. fnameescape(tmpfile)
-	enddef
-
-
-	command -nargs=? MTemporary call SaveToTemp(<f-args>)
-	command -nargs=? Mtemporary call SaveToTemp(<f-args>)
-	command -nargs=? MkTemporary call SaveToTemp(<f-args>)
-	command -nargs=? MKTemporary call SaveToTemp(<f-args>)
 endif
 
-set nonumber
 set ignorecase
 set smartcase
+set foldopen-=search
 # def CaseHelper(cmd: string)
 # 	set noignorecase
 # 	final mmm = "normal! " .. cmd
@@ -118,6 +140,20 @@ set smartcase
 nnoremap <silent> * :let @/='\C\<' . expand('<cword>') . '\>'<CR>n
 # need fix
 nnoremap <silent> # :let @/='\C\<' . expand('<cword>') . '\>'<CR>N
+
+# Search for selected text, forwards or backwards.
+vnoremap <silent> * :<C-U>
+  \let old_reg=getreg('"')<Bar>let old_regtype=getregtype('"')<CR>
+  \gvy/<C-R>=&ic?'\c':'\C'<CR><C-R><C-R>=substitute(
+  \escape(@", '/\.*$^~['), '\_s\+', '\\_s\\+', 'g')<CR><CR>
+  \gVzv:call setreg('"', old_reg, old_regtype)<CR>
+vnoremap <silent> # :<C-U>
+  \let old_reg=getreg('"')<Bar>let old_regtype=getregtype('"')<CR>
+  \gvy?<C-R>=&ic?'\c':'\C'<CR><C-R><C-R>=substitute(
+  \escape(@", '?\.*$^~['), '\_s\+', '\\_s\\+', 'g')<CR><CR>
+  \gVzv:call setreg('"', old_reg, old_regtype)<CR>
+# remove this?
+vnoremap // y/\V<C-R>=escape(@",'/\')<CR><CR>
 
 def CleanedSearchReg(): string
     var pat = @/
@@ -136,46 +172,45 @@ noremap <C-x> "=<SID>CleanedSearchReg()<CR>
 
 set hlsearch
 set incsearch
-set history=1000
+set nowrapscan # search wrap
 
-set so=10 # scrolloff
-set nowrap
-set nowrapscan
+noremap <expr> n 'Nn'[v:searchforward]
+noremap <expr> N 'nN'[v:searchforward]
 
-set smartindent
-set autoindent
-set shiftwidth=4
-set tabstop=4
-set shortmess-=S
+### Time-test (for this and visual version): is this necessary on Unix? and
+# this forces me to \\ to put one \. Would this happen with ' instead of "?
+#
+# Note: here I put doubled "" just if I then need add escaped things, being a single word
+# probably here I could have used not even a single " (for sure one " worked)
+def GrepCword()
+    var cmd = 'grep "' .. shellescape(expand("<cword>")) .. '"'
+    histadd(':', cmd)
+    execute cmd
+enddef
 
-if has('eval')
-	silent! packadd! comment
-	silent! packadd! matchit
-endif
-filetype plugin indent on
-if has('syntax')
-	syntax on
-endif
-if has('wildmenu')
-  set wildmenu
-  set wildoptions=pum
-endif
-if has('mksession')
-	set sessionoptions-=options
-endif
-set conceallevel=3
+# originally like this, time will tell if fine:
+# double also the outer ", because otherwise become sh -c "git grep "stuff"",
+# which is not good
+# vnoremap <c-s-g> y<Cmd>execute "grep \"" .. shellescape(@", 1) .. "\""<CR>
+def GrepVisual()
+    var cmd = 'grep "' .. shellescape(@", 1) .. '"'
+    histadd(':', cmd)
+    execute cmd
+enddef
 
-if has("win32")
-	set guifont=Roboto_Mono:h14:cANSI:qDRAFT
-else
-	set guifont=Roboto\ Mono\ 14
-endif
-set guioptions-=m # normal alt menu
-set guioptions-=T # toolbar like save button
-set guioptions-=L # vertical split scrollbar left
-set guioptions-=r # vertical scrollbar right
-set mousemodel=popup
+inoremap <c-s-g> <Esc><Cmd>call <SID>GrepCword()<CR>
+noremap <c-s-g> <Cmd>call <SID>GrepCword()<CR>
+vnoremap <c-s-g> y<Cmd>call <SID>GrepVisual()<CR>
 
+# substitute stuff
+set gdefault
+cnoremap <expr> / getcmdtype() == ':' && getcmdline() =~ "\\v^(\\%\\|'\\<,'\\>)?s$" ? '//<Left>' : '/'
+
+##### End Search stuff #############################################################################
+####################################################################################################
+
+
+# Sort of Zen mode
 # using legacy function, just coz let-& seems not supported in vim9
 if has('eval')
 	function! g:ToggleCursor()
@@ -197,20 +232,6 @@ if has('eval')
 	endfunction
 endif
 
-set shiftround # just when type >> when you already have 2 spaces it just adds 2
-set backspace=indent,eol,start
-set splitright
-set splitbelow
-set formatoptions+=j
-
-if !exists(":DiffOrig")
-  command DiffOrig vert new | set buftype=nofile | read ++edit %% | :0d _ | diffthis
-		  \ | wincmd p | diffthis
-endif
-
-if !exists(":Diffro")
-	command -nargs=1 -complete=file Diffro vertical diffsplit <args> | windo setlocal readonly | wincmd p
-endif
 
 nnoremap <Left> <Cmd>cprevious<CR>
 nnoremap <Right> <Cmd>cnext<CR>
@@ -222,14 +243,26 @@ noremap K <C-]>
 nnoremap L <C-T>
 noremap <c-n> <Cmd>tabnew<CR>
 
-noremap <expr> n 'Nn'[v:searchforward]
-noremap <expr> N 'nN'[v:searchforward]
 
-noremap <Leader>t <Cmd>colorscheme torte<CR>
-noremap <Leader>e <Cmd>colorscheme evening<CR>
-noremap <Leader>s <Cmd>colorscheme slate<CR>
-noremap <Leader>l <Cmd>set background=dark <Bar> colorscheme lunaperche<CR>
-noremap <Leader>d <Cmd>colorscheme default<CR>
+augroup quickfix_stuff
+  def If_qf()
+	  if (&buftype == 'quickfix')
+		  noremap <buffer> <Enter> <Enter>
+  	  endif
+  enddef
+  autocmd!
+  autocmd BufWinEnter * If_qf()
+  def RemoveQFItems(first: number, last: number)
+	  var qfall = getqflist()
+	  for i in range(last - 1, first - 1, -1)
+		  remove(qfall, i)
+	  endfor
+	  setqflist(qfall, 'r')
+	  copen
+  enddef
+  autocmd FileType qf map  <buffer> dd <ScriptCmd>RemoveQFItems(line('.'), line('.'))<CR>
+  autocmd FileType qf vmap <buffer> d  <ScriptCmd>RemoveQFItems(line("'<"), line("'>"))<CR>
+augroup END
 
 ############################################################################
 # these might look weird but they are in synthony with how I have reprogrammed
@@ -248,27 +281,6 @@ noremap <Leader>d <Cmd>colorscheme default<CR>
 #  &magic LAYER_Magic 0          &none        &kp INS        &trans        &trans                                                              &trans  &trans  &trans  &trans  &trans  &trans                                &kp LC(MINUS)          &kp LC(EQUAL)  &kp LC(LA(LBKT))  &kp LC(LA(RBKT))    [&kp LC(PG_DN)]
 #
 #
-
-augroup quickfix_binding
-  def If_qf()
-	  if (&buftype == 'quickfix')
-		  noremap <buffer> <Enter> <Enter>
-  	  endif
-  enddef
-  autocmd!
-  autocmd BufWinEnter * If_qf()
-augroup END
-# dd and visual d to remove from quickfix
-def RemoveQFItems(first: number, last: number)
-  var qfall = getqflist()
-  for i in range(last - 1, first - 1, -1)
-    remove(qfall, i)
-  endfor
-  setqflist(qfall, 'r')
-  copen
-enddef
-autocmd FileType qf map  <buffer> dd <ScriptCmd>RemoveQFItems(line('.'), line('.'))<CR>
-autocmd FileType qf vmap <buffer> d  <ScriptCmd>RemoveQFItems(line("'<"), line("'>"))<CR>
 
 
 noremap <C--> <cmd>cpfile<CR>
@@ -317,30 +329,6 @@ inoremap <c-s-y> <C-x><C-u>
 inoremap <c-a-;> <Esc><Cmd>write<CR>
 noremap <c-a-;> <Cmd>write<CR>
 
-### Time-test (for this and visual version): is this necessary on Unix? and
-# this forces me to \\ to put one \. Would this happen with ' instead of "?
-#
-# Note: here I put doubled "" just if I then need add escaped things, being a single word
-# probably here I could have used not even a single " (for sure one " worked)
-def GrepCword()
-    var cmd = 'grep "' .. shellescape(expand("<cword>")) .. '"'
-    histadd(':', cmd)
-    execute cmd
-enddef
-
-# originally like this, time will tell if fine:
-# double also the outer ", because otherwise become sh -c "git grep "stuff"",
-# which is not good
-# vnoremap <c-s-g> y<Cmd>execute "grep \"" .. shellescape(@", 1) .. "\""<CR>
-def GrepVisual()
-    var cmd = 'grep "' .. shellescape(@", 1) .. '"'
-    histadd(':', cmd)
-    execute cmd
-enddef
-
-inoremap <c-s-g> <Esc><Cmd>call <SID>GrepCword()<CR>
-noremap <c-s-g> <Cmd>call <SID>GrepCword()<CR>
-vnoremap <c-s-g> y<Cmd>call <SID>GrepVisual()<CR>
 # inoremap <c-s-i> <Cmd>tabnext<CR>
 noremap <c-s-i> <Cmd>tabnext<CR>
 inoremap <c-s-u> <Cmd>tabprevious<CR>
@@ -357,7 +345,8 @@ noremap <c-p> "*p
 # and filling clipboard register
 vnoremap <c-c> "+y
 
-############################################################################
+###### Terminal stuff #############################################################################
+####################################################################################################
 
 augroup term
 	autocmd!
@@ -375,58 +364,38 @@ tnoremap <ScrollWheelUp> <C-w>N3<c-y>
 tnoremap <ScrollWheelDown> <C-w>N
 noremap <MiddleMouse> i
 
-#inoremap <c-w><c-w> <esc><c-w><c-w>gi
-#inoremap <c-w>j <esc><c-w>jgi
-#inoremap <c-w>k <esc><c-w>kgi
-#inoremap <c-w>h <esc><c-w>hgi
-#inoremap <c-w>l <esc><c-w>lgi
+if has("unix")
+    noremap <D-r> <Cmd>terminal<CR>
+    noremap <D-t> <Cmd>terminal ++curwin<CR>
+    noremap <D-S-t> <Cmd>call TerCurDirFunc()<CR>
+endif
+if has("win32")
+    command TerCur term ++curwin
+    command TerCurDir call TerCurDirFunc()
+endif
+def TerCurDirFunc()
+    if &filetype ==# 'netrw'
+        var dir = b:netrw_curdir
+        execute 'lcd ' .. fnameescape(dir)
+		term ++curwin
+        dir = getcwd(-1)
+        execute 'lcd ' .. fnameescape(dir)
+	else
+		term ++curwin
+    endif
+enddef
 
-inoremap <c-z> <esc><c-z>
+###### Diff stuff #############################################################################
+###############################################################################################
 
-set foldopen-=search
+if !exists(":DiffOrig")
+  command DiffOrig vert new | set buftype=nofile | read ++edit %% | :0d _ | diffthis
+		  \ | wincmd p | diffthis
+endif
 
-# Search for selected text, forwards or backwards.
-vnoremap <silent> * :<C-U>
-  \let old_reg=getreg('"')<Bar>let old_regtype=getregtype('"')<CR>
-  \gvy/<C-R>=&ic?'\c':'\C'<CR><C-R><C-R>=substitute(
-  \escape(@", '/\.*$^~['), '\_s\+', '\\_s\\+', 'g')<CR><CR>
-  \gVzv:call setreg('"', old_reg, old_regtype)<CR>
-vnoremap <silent> # :<C-U>
-  \let old_reg=getreg('"')<Bar>let old_regtype=getregtype('"')<CR>
-  \gvy?<C-R>=&ic?'\c':'\C'<CR><C-R><C-R>=substitute(
-  \escape(@", '?\.*$^~['), '\_s\+', '\\_s\\+', 'g')<CR><CR>
-  \gVzv:call setreg('"', old_reg, old_regtype)<CR>
-# remove this?
-vnoremap // y/\V<C-R>=escape(@",'/\')<CR><CR>
-
-augroup exrc # fuck 'exrc'
-	def Symbolic_rc(dir: string)
-		if has("unix")
-			if (filereadable(".vimrc") && (resolve(dir .. '/.vimrc') != resolve(expand('~/.vimrc'))))
-				source .vimrc
-			endif
-		# sarebbe da fare la versione per windows
-		else
-			source .vimrc
-		endif
-	enddef
-	autocmd!
-	autocmd DirChanged * Symbolic_rc(expand('<afile>'))
-	autocmd DirChanged global Symbolic_rc(expand('<afile>'))
-	autocmd DirChanged tabpage Symbolic_rc(expand('<afile>'))
-	autocmd DirChanged window Symbolic_rc(expand('<afile>'))
-augroup END
-
-# In TUI Vim, <C-S-letter> is indistinguishable from <C-letter>. You should change them to more portable combos.
-# nnoremap <C-j> <C-w>p<C-e><C-w>p
-# nnoremap <C-k> <C-w>p<C-y><C-w>p
-# inoremap <C-j> <Esc><C-w>p<C-e><C-w>pi
-# inoremap <C-k> <Esc><C-w>p<C-y><C-w>pi
-# tnoremap <C-j> <Esc><C-w>p<C-e><C-w>pi
-# tnoremap <C-k> <Esc><C-w>p<C-y><C-w>pi
-
-# Ignore warning of GCC in quickfix list
-set errorformat^=%-G%f:%l:\ warning:%m
+if !exists(":Diffro")
+	command -nargs=1 -complete=file Diffro vertical diffsplit <args> | windo setlocal readonly | wincmd p
+endif
 
 set diffopt+=vertical,hiddenoff
 
@@ -460,6 +429,9 @@ augroup diffSpace
 	autocmd FileType python,javascript,java,c,cpp,go,prisma,rust,dart setlocal diffopt+=iwhite
 augroup END
 
+#####  end diff stuff  #############################################################################
+####################################################################################################
+
 # Auto close brackets
 # most usable
 #inoremap ( ()<left>
@@ -472,9 +444,46 @@ augroup END
 #inoremap {;<CR> {<CR>};<ESC>O
 #0 zero vs O0o (nel terminale non si vede bene in poche parole)
 
-set gdefault
+#inoremap <c-w><c-w> <esc><c-w><c-w>gi
+#inoremap <c-w>j <esc><c-w>jgi
+#inoremap <c-w>k <esc><c-w>kgi
+#inoremap <c-w>h <esc><c-w>hgi
+#inoremap <c-w>l <esc><c-w>lgi
 
-# Conveniency
+# suspend?
+inoremap <c-z> <esc><c-z>
+
+# source .vimrc of every dir
+augroup exrc # fuck 'exrc'..
+	def Symbolic_rc(dir: string)
+		if has("unix")
+			if (filereadable(".vimrc") && (resolve(dir .. '/.vimrc') != resolve(expand('~/.vimrc'))))
+				source .vimrc
+			endif
+		# sarebbe da fare la versione per windows
+		else
+			source .vimrc
+		endif
+	enddef
+	autocmd!
+	autocmd DirChanged * Symbolic_rc(expand('<afile>'))
+	autocmd DirChanged global Symbolic_rc(expand('<afile>'))
+	autocmd DirChanged tabpage Symbolic_rc(expand('<afile>'))
+	autocmd DirChanged window Symbolic_rc(expand('<afile>'))
+augroup END
+
+# In TUI Vim, <C-S-letter> is indistinguishable from <C-letter>. You should change them to more portable combos.
+# nnoremap <C-j> <C-w>p<C-e><C-w>p
+# nnoremap <C-k> <C-w>p<C-y><C-w>p
+# inoremap <C-j> <Esc><C-w>p<C-e><C-w>pi
+# inoremap <C-k> <Esc><C-w>p<C-y><C-w>pi
+# tnoremap <C-j> <Esc><C-w>p<C-e><C-w>pi
+# tnoremap <C-k> <Esc><C-w>p<C-y><C-w>pi
+
+# Ignore warning of GCC in quickfix list
+set errorformat^=%-G%f:%l:\ warning:%m
+
+################################################### Conveniency
 
 # zz is easier to type
 nnoremap <Up> <c-y>
@@ -484,6 +493,40 @@ augroup parenthesis
     autocmd!
     autocmd FileType * MapParens()
 augroup END
+
+# colorscheme stuff
+noremap <Leader>t <Cmd>colorscheme torte<CR>
+noremap <Leader>e <Cmd>colorscheme evening<CR>
+noremap <Leader>s <Cmd>colorscheme slate<CR>
+noremap <Leader>l <Cmd>set background=dark <Bar> colorscheme lunaperche<CR>
+noremap <Leader>d <Cmd>colorscheme default<CR>
+
+if has('eval')
+	def SaveToTemp(suffix: string = '')
+		var tmpfile: string
+		if suffix == ''
+			tmpfile = system('mktemp')
+		else
+			tmpfile = system('mktemp --suffix .' .. suffix)
+		endif
+		tmpfile = substitute(tmpfile, "\n", '', '') # Remove trailing newline
+
+		execute 'edit ' .. fnameescape(tmpfile)
+	enddef
+
+	command -nargs=? MTemporary call SaveToTemp(<f-args>)
+	command -nargs=? Mtemporary call SaveToTemp(<f-args>)
+	command -nargs=? MkTemporary call SaveToTemp(<f-args>)
+	command -nargs=? MKTemporary call SaveToTemp(<f-args>)
+
+	augroup whitespace
+		autocmd!
+		autocmd BufWritePre * :%s/\s\+$//e
+	augroup END
+
+	silent! packadd! comment
+	silent! packadd! matchit
+endif
 
 def MapParens()
     const excluded = ['text', 'markdown', 'mail', 'rst', 'tex', 'asciidoc', 'help', '']
@@ -499,7 +542,6 @@ nnoremap zt zz
 nnoremap zz zt
 nnoremap z[ zoz] // go to end of fold
 cabbrev cw bo cw
-cnoremap <expr> / getcmdtype() == ':' && getcmdline() =~ "\\v^(\\%\\|'\\<,'\\>)?s$" ? '//<Left>' : '/'
 command Vs vert split
 command W write
 command Wa wall
@@ -514,26 +556,6 @@ noremap <S-Tab> <Tab>
 # important to be remapped after c-(s)-i (see help ctrl-i)
 noremap <Tab> <C-O>
 
-if has("unix")
-    noremap <D-r> <Cmd>terminal<CR>
-    noremap <D-t> <Cmd>terminal ++curwin<CR>
-    noremap <D-S-t> <Cmd>call TerCurDirFunc()<CR>
-endif
-if has("win32")
-    command TerCur term ++curwin
-    command TerCurDir call TerCurDirFunc()
-endif
-def TerCurDirFunc()
-    if &filetype ==# 'netrw'
-        var dir = b:netrw_curdir
-        execute 'lcd ' .. fnameescape(dir)
-		term ++curwin
-        dir = getcwd(-1)
-        execute 'lcd ' .. fnameescape(dir)
-	else
-		term ++curwin
-    endif
-enddef
 
 # dont like this characters but you could customize this
 #   :set list
