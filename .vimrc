@@ -87,6 +87,8 @@ set backspace=indent,eol,start
 set splitright
 set splitbelow
 set formatoptions+=j # join
+# Ignore warning of GCC in quickfix list
+set errorformat^=%-G%f:%l:\ warning:%m
 
 # # statusline affects scroll?
 # set scroll=5
@@ -96,6 +98,13 @@ set formatoptions+=j # join
 
 ####################################################################################################
 ##### Search related stuff  ########################################################################
+
+set ignorecase
+set smartcase
+set foldopen-=search
+set hlsearch
+set incsearch
+set nowrapscan # search wrap
 
 if has('eval')
     # normally the correct way to call an s: instead of g: is <SID>SetGGrep()
@@ -122,26 +131,25 @@ if has('eval')
 	autocmd VimEnter * call Check_git_plugin()
 endif
 
-set ignorecase
-set smartcase
-set foldopen-=search
-# def CaseHelper(cmd: string)
-# 	set noignorecase
-# 	final mmm = "normal! " .. cmd
-# 	echo mmm
-# 	silent execute mmm
-# 	set ignorecase
-# 	set smartcase
-# enddef
-# noremap * <Cmd>call <SID>CaseHelper("*")<CR>
-# noremap g* <Cmd>call <SID>CaseHelper("g*")<CR>
-# noremap # <Cmd>call <SID>CaseHelper("#")<CR>
-# noremap g# <Cmd>call <SID>CaseHelper("g#")<CR>
-nnoremap <silent> * :let @/='\C\<' . expand('<cword>') . '\>'<CR>n
-# need fix
-nnoremap <silent> # :let @/='\C\<' . expand('<cword>') . '\>'<CR>N
+noremap <expr> n 'Nn'[v:searchforward]
+noremap <expr> N 'nN'[v:searchforward]
 
-# Search for selected text, forwards or backwards.
+### Keep them case sensitive,
+nnoremap <silent> * <Cmd>let @/='\C\<' . expand('<cword>') . '\>' <Bar> call histadd('/', @/) <CR>n
+# '#' needs more handling, to be perfect would require a more 'builtin' solution
+def HashStar()
+    var save = getpos('.')
+    @/ = '\C\<' .. expand('<cword>') .. '\>'
+    histadd('/', @/)
+    normal! b
+    if search(@/, 'b') == 0
+        setpos('.', save)
+		echohl ErrorMsg | echo 'E384: search hit TOP without match for: ' .. @/ | echohl None
+    endif
+enddef
+nnoremap <silent> # <Cmd>call <SID>HashStar()<CR>
+
+# Search selected text, no word delimiters, adds to search history (e' una /)
 vnoremap <silent> * :<C-U>
   \let old_reg=getreg('"')<Bar>let old_regtype=getregtype('"')<CR>
   \gvy/<C-R>=&ic?'\c':'\C'<CR><C-R><C-R>=substitute(
@@ -167,15 +175,7 @@ enddef
 cnoremap <C-x> <C-r>=<SID>CleanedSearchReg()<CR>
 inoremap <C-x> <C-r>=<SID>CleanedSearchReg()<CR>
 noremap <C-x> "=<SID>CleanedSearchReg()<CR>
-# nnoremap <silent> g* :let @/='\C' . expand('<cword>')<CR>n
-# nnoremap <silent> g# :let @/='\C' . expand('<cword>')<CR>N
 
-set hlsearch
-set incsearch
-set nowrapscan # search wrap
-
-noremap <expr> n 'Nn'[v:searchforward]
-noremap <expr> N 'nN'[v:searchforward]
 
 ### Time-test (for this and visual version): is this necessary on Unix? and
 # this forces me to \\ to put one \. Would this happen with ' instead of "?
@@ -206,32 +206,8 @@ vnoremap <c-s-g> y<Cmd>call <SID>GrepVisual()<CR>
 set gdefault
 cnoremap <expr> / getcmdtype() == ':' && getcmdline() =~ "\\v^(\\%\\|'\\<,'\\>)?s$" ? '//<Left>' : '/'
 
-##### End Search stuff #############################################################################
+##### Mappings relatively important stuff ##########################################################
 ####################################################################################################
-
-
-# Sort of Zen mode
-# using legacy function, just coz let-& seems not supported in vim9
-if has('eval')
-	function! g:ToggleCursor()
-		const default = 'n-v-c:block-Cursor/lCursor,ve:ver35-Cursor,o:hor50-Cursor,i-ci:ver25-Cursor/lCursor,r-cr:hor20-Cursor/lCursor,sm:block-Cursor-blinkwait175-blinkoff150-blinkon175'
-		"
-		" white_except_insert
-		" const modified = 'n-v-c:Normal,ve:ver35-Normal,o:hor50-Normal,i-ci:ver25-block-Cursor,r-cr:hor20-Normal,sm:Normal-blinkwait175-blinkoff0-blinkon175'
-		"
-		" visual (grey)
-		const modified = 'n-v-c:Visual,ve:ver35-Visual,o:hor50-Visual,i-ci:ver25-block-Cursor,r-cr:hor20-Visual,sm:Visual,a:blinkon0'
-
-		if (&guicursor == default)
-			let &guicursor = modified
-			set so=999
-		else
-			set guicursor&
-			set so=5
-		endif
-	endfunction
-endif
-
 
 nnoremap <Left> <Cmd>cprevious<CR>
 nnoremap <Right> <Cmd>cnext<CR>
@@ -429,15 +405,14 @@ augroup diffSpace
 	autocmd FileType python,javascript,java,c,cpp,go,prisma,rust,dart setlocal diffopt+=iwhite
 augroup END
 
-#####  end diff stuff  #############################################################################
+#####  Conveniency stuff  #############################################################################
 ####################################################################################################
 
-# Auto close brackets
+# Auto close things
 # most usable
 #inoremap ( ()<left>
 #inoremap [ []<left>
 #inoremap { {}<left>
-
 #inoremap " ""<left>
 #inoremap ' ''<left>
 #inoremap {<CR> {<CR>}<ESC>O
@@ -480,11 +455,6 @@ augroup END
 # tnoremap <C-j> <Esc><C-w>p<C-e><C-w>pi
 # tnoremap <C-k> <Esc><C-w>p<C-y><C-w>pi
 
-# Ignore warning of GCC in quickfix list
-set errorformat^=%-G%f:%l:\ warning:%m
-
-################################################### Conveniency
-
 # zz is easier to type
 nnoremap <Up> <c-y>
 nnoremap <Down> <c-e>
@@ -502,6 +472,26 @@ noremap <Leader>l <Cmd>set background=dark <Bar> colorscheme lunaperche<CR>
 noremap <Leader>d <Cmd>colorscheme default<CR>
 
 if has('eval')
+	# Sort of Zen mode
+	# using legacy function, just coz let-& seems not supported in vim9
+	function! g:ToggleCursor()
+		const default = 'n-v-c:block-Cursor/lCursor,ve:ver35-Cursor,o:hor50-Cursor,i-ci:ver25-Cursor/lCursor,r-cr:hor20-Cursor/lCursor,sm:block-Cursor-blinkwait175-blinkoff150-blinkon175'
+		"
+		" white_except_insert
+		" const modified = 'n-v-c:Normal,ve:ver35-Normal,o:hor50-Normal,i-ci:ver25-block-Cursor,r-cr:hor20-Normal,sm:Normal-blinkwait175-blinkoff0-blinkon175'
+		"
+		" visual (grey)
+		const modified = 'n-v-c:Visual,ve:ver35-Visual,o:hor50-Visual,i-ci:ver25-block-Cursor,r-cr:hor20-Visual,sm:Visual,a:blinkon0'
+
+		if (&guicursor == default)
+			let &guicursor = modified
+			set so=999
+		else
+			set guicursor&
+			set so=5
+		endif
+	endfunction
+
 	def SaveToTemp(suffix: string = '')
 		var tmpfile: string
 		if suffix == ''
