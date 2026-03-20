@@ -192,14 +192,22 @@ enddef
 # double also the outer ", because otherwise become sh -c "git grep "stuff"",
 # which is not good
 # vnoremap <c-s-g> y<Cmd>execute "grep \"" .. shellescape(@", 1) .. "\""<CR>
+#
+# quando c'e' '$' mi sa un casino per shellescape, per ora mi accontento
+# funzioni negli altri casi
 def GrepVisual()
-    var cmd = 'grep "' .. shellescape(@", 1) .. '"'
+    if @" =~ '\n.\+' # more than one line
+        echohl ErrorMsg | echo 'grep works on single lines' | echohl None
+        return
+    endif
+    var cmd = 'grep "' .. shellescape(escape(@", '.*^['), 1) .. '"'
     histadd(':', cmd)
     execute cmd
 enddef
 
 inoremap <c-s-g> <Esc><Cmd>call <SID>GrepCword()<CR>
 noremap <c-s-g> <Cmd>call <SID>GrepCword()<CR>
+# ripristinare il registro magari..
 vnoremap <c-s-g> y<Cmd>call <SID>GrepVisual()<CR>
 
 # substitute stuff
@@ -484,7 +492,9 @@ augroup exrc # fuck 'exrc'..
 			endif
 		# sarebbe da fare la versione per windows
 		else
-			source .vimrc
+			if filereadable(".vimrc")
+				source .vimrc
+			endif
 		endif
 	enddef
 	autocmd!

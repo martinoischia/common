@@ -25,7 +25,7 @@ shopt -s checkwinsize
 
 # If set, the pattern "**" used in a pathname expansion context will
 # match all files and zero or more directories and subdirectories.
-#shopt -s globstar
+shopt -s globstar
 
 # make less more friendly for non-text input files, see lesspipe(1)
 [ -x /usr/bin/lesspipe ] && eval "$(SHELL=/bin/sh lesspipe)"
@@ -189,9 +189,13 @@ export PATH="$DENO_INSTALL/bin:$PATH"
 #='__git_ps1 "\u:\w" "\\\$ "'
 
 # export LC_COLLATE=C # I prefer sorting based also on spaces, but I'll just use vim built-in
-shopt -s globstar
 export LESS='-S -i -R -F -m'
 export MANLESS='\$MAN_PN\ ?ltline\ %lt?L/%L..?e\ (END):?pB\ %pB\%..$ +Gg'
 
 # if you wish, this couple of letters fix should be pushed to man man
 #export MANPAGER='less +Gg'
+
+
+if [ -f ~/.bashrc_local ]; then
+    . ~/.bashrc_local
+fi

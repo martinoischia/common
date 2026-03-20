@@ -6,6 +6,15 @@
 - :exclude: or :!: or :^: excludes from previously specified pathspec (or all
   if none were specified)
 
+*glob*
+
+normale ? sta per un carattere (. dei pattern)
+Extended (active by default)
+?(abc|def)
+e' all'incontrario delle regex classiche, si mette il simbolo prima, sempre
+seguito da aperta (. Sicuramente most useful e' il !() per escludere dalla
+lista dei match.
+
 *grep*
 
 BRE, the default, e' come vim magic nelle cose piu' importanti.
