@@ -7,11 +7,11 @@ vim9script
 # 	a bit small in that corner? is there a way to diffs it?)  or just undotree??
 # 	cmdlinecomplete
 # 	? for C, C++ clang_complete, for python jedi_vim
-
 # Search for command to see all the UDC (two letter ones are just util)
+autocmd BufRead,BufNewFile ~/vim_todo :source ~/prova_abbrev.vim
 
 # Current language: "LC_CTYPE=en_US.UTF-8;LC_NUMERIC=C;LC_TIME=it_IT.UTF-8;LC_COLLATE=en_US.UTF-8;LC_MONETARY=it_IT.UTF-8;LC_MESSAGES=en_US.UTF-8;LC_PAPER=it_IT.UTF-8;LC_NAME=en_US.UTF-8;LC_ADDRESS=en_US.UTF-8;LC_TELEPHONE=en_US.UTF-8;LC_MEASUREMENT=it_IT.UTF-8;LC_IDENTIFICATION=en_US.UTF-8"
-
+# colorscheme torte
 set textwidth=79
 if has("win32")
 	set shell=\"C:\Program\ Files\Git\bin\sh.exe\"

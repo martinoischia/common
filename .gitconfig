@@ -1,6 +1,6 @@
 [core]
 	editor = vim
-	excludesFile = ~/.gitignore
+	excludesFile = ~/common/.gitignore
 
 [user]
 	name = "Martino Ischia"
@@ -11,6 +11,6 @@
 [init]
 	defaultBranch = master
 [diff]
-    external = difft
+	# external = difft
 [advice]
 	detachedHead = false
